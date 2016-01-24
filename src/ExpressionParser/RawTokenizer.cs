@@ -16,7 +16,7 @@ namespace Soukoku.ExpressionParser
                 '+', '-', '*', '/', '=', '%', '^',
                 ',', '<', '>', '&', '|', '!',
                 '(', ')', '{', '}', '[', ']',
-                '"', '\''
+                '"', '\'', '~'
             };
 
 
@@ -29,7 +29,7 @@ namespace Soukoku.ExpressionParser
         /// Initializes a new instance of the <see cref="RawTokenizer" /> class.
         /// </summary>
         /// <param name="symbols">The char values to count as symbols. If null the <see cref="DefaultSymbols"/> will be used.</param>
-        public RawTokenizer(char[] symbols)
+        public RawTokenizer(params char[] symbols)
         {
             _symbols = symbols ?? DefaultSymbols;
         }

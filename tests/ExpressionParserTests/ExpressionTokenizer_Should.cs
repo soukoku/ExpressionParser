@@ -72,29 +72,89 @@ namespace Soukoku.ExpressionParser
         public void Recognize_Multiple_Operators()
         {
             GivenInput("ab + cd * 5");
-            ExpectValues("ab", "+", "cd", 
+            ExpectValues("ab", "+", "cd",
                 "*", "5");
-            ExpectTypes(ExpressionTokenType.Value, ExpressionTokenType.Operator, ExpressionTokenType.Value, 
+            ExpectTypes(ExpressionTokenType.Value, ExpressionTokenType.Operator, ExpressionTokenType.Value,
                 ExpressionTokenType.Operator, ExpressionTokenType.Value);
         }
 
         [TestMethod]
         public void Recognize_MultiChar_Operators()
         {
-            GivenInput("test += ab++ * 5");
-            ExpectValues("test", "+=", "ab",
+            GivenInput("test && ab++ * 5");
+            ExpectValues("test", "&&", "ab",
                 "++", "*", "5");
             ExpectTypes(ExpressionTokenType.Value, ExpressionTokenType.Operator, ExpressionTokenType.Value,
                 ExpressionTokenType.Operator, ExpressionTokenType.Operator, ExpressionTokenType.Value);
         }
-        
+
         [TestMethod]
         public void Recognize_Ambiguous_MultiChar_Operators()
         {
             GivenInput("test+++ 5"); // the canonical ++ and + operators without space example
             ExpectValues("test", "++", "+", "5");
-            ExpectTypes(ExpressionTokenType.Value, ExpressionTokenType.Operator, 
+            ExpectTypes(ExpressionTokenType.Value, ExpressionTokenType.Operator,
                 ExpressionTokenType.Operator, ExpressionTokenType.Value);
+        }
+
+
+        [TestMethod]
+        public void Recognize_Parenthesis()
+        {
+            GivenInput("4 * (5 + cd)");
+            ExpectValues("4", "*", "(", "5", "+", "cd", ")");
+            ExpectTypes(ExpressionTokenType.Value, ExpressionTokenType.Operator, ExpressionTokenType.OpenParenthesis,
+                ExpressionTokenType.Value, ExpressionTokenType.Operator, ExpressionTokenType.Value,
+                ExpressionTokenType.CloseParenthesis);
+        }
+
+        [TestMethod]
+        public void Read_Between_Braces_As_Field()
+        {
+            GivenInput(" {asdf qwerty} ");
+            ExpectValues("asdf qwerty");
+            ExpectTypes(ExpressionTokenType.Field);
+        }
+
+        [TestMethod]
+        public void Read_Between_Double_Quotes()
+        {
+            GivenInput(" \"you know it\" ");
+            ExpectValues("you know it");
+            ExpectTypes(ExpressionTokenType.DoubleQuoted);
+        }
+
+        [TestMethod]
+        public void Read_Between_Single_Quotes()
+        {
+            GivenInput(" 'does it work?' ");
+            ExpectValues("does it work?");
+            ExpectTypes(ExpressionTokenType.SingleQuoted);
+        }
+
+        // TODO: test escaped quotes
+
+        [TestMethod]
+        public void Read_Func_Without_Parameters()
+        {
+            GivenInput("Foo()");
+            ExpectValues("Foo", "(", ")");
+            ExpectTypes(ExpressionTokenType.Function, ExpressionTokenType.OpenParenthesis, ExpressionTokenType.CloseParenthesis);
+        }
+        [TestMethod]
+        public void Read_Func_With_One_Parameter()
+        {
+            GivenInput("Foo(123)");
+            ExpectValues("Foo", "(", "123", ")");
+            ExpectTypes(ExpressionTokenType.Function, ExpressionTokenType.OpenParenthesis, ExpressionTokenType.Value, ExpressionTokenType.CloseParenthesis);
+        }
+        [TestMethod]
+        public void Read_Func_With_Multiple_Parameters()
+        {
+            GivenInput("Foo(123, bar)");
+            ExpectValues("Foo", "(", "123", ",", "bar", ")");
+            ExpectTypes(ExpressionTokenType.Function, ExpressionTokenType.OpenParenthesis, ExpressionTokenType.Value,
+                ExpressionTokenType.Comma, ExpressionTokenType.Value, ExpressionTokenType.CloseParenthesis);
         }
 
     }
