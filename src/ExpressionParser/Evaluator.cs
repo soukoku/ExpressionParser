@@ -145,7 +145,7 @@ namespace Soukoku.ExpressionParser
             var op2 = _stack.Pop().ToDecimal(_context);
             var op1 = _stack.Pop().ToDecimal(_context);
 
-            _stack.Push(new ExpressionToken(operation(op1, op2).ToString()));
+            _stack.Push(new ExpressionToken(operation(op1, op2).ToString(CultureInfo.CurrentCulture)));
         }
 
         private void HandleFunction(string functionName)

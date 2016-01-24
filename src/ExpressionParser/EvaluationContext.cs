@@ -14,26 +14,36 @@ namespace Soukoku.ExpressionParser
         static Dictionary<string, FunctionInfo> BuiltInFunctions = new Dictionary<string, FunctionInfo>
         {
             { "pow", new FunctionInfo(2, (ctx, args)=>
-                    new ExpressionToken( Math.Pow(args[0].ToDouble(ctx), args[1].ToDouble(ctx)).ToString())) },
+                    new ExpressionToken( Math.Pow(args[0].ToDouble(ctx), args[1].ToDouble(ctx)).ToString(CultureInfo.CurrentCulture))) },
             { "sin", new FunctionInfo(1, (ctx, args)=>
-                    new ExpressionToken( Math.Sin(args[0].ToDouble(ctx)).ToString()))},
+                    new ExpressionToken( Math.Sin(args[0].ToDouble(ctx)).ToString(CultureInfo.CurrentCulture)))},
             { "cos", new FunctionInfo(1, (ctx, args)=>
-                    new ExpressionToken( Math.Cos(args[0].ToDouble(ctx)).ToString()))},
+                    new ExpressionToken( Math.Cos(args[0].ToDouble(ctx)).ToString(CultureInfo.CurrentCulture)))},
             { "tan", new FunctionInfo(1, (ctx, args)=>
-                    new ExpressionToken( Math.Tan(args[0].ToDouble(ctx)).ToString()))}
+                    new ExpressionToken( Math.Tan(args[0].ToDouble(ctx)).ToString(CultureInfo.CurrentCulture)))}
         };
 
         Dictionary<string, FunctionInfo> _instanceFuncs = new Dictionary<string, FunctionInfo>();
+        Func<string, object> _fieldLookup;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EvaluationContext"/> class.
+        /// </summary>
+        /// <param name="fieldLookupRoutine">The field value lookup routine.</param>
+        public EvaluationContext(Func<string,object> fieldLookupRoutine)
+        {
+            _fieldLookup = fieldLookupRoutine;
+        }
 
         /// <summary>
         /// Gets the field value.
         /// </summary>
         /// <param name="field">The field.</param>
         /// <returns></returns>
-        /// <exception cref="System.NotImplementedException"></exception>
         public object GetFieldValue(string field)
         {
-            throw new NotImplementedException();
+            if (_fieldLookup != null) { return _fieldLookup(field); }
+            return null;
         }
 
         /// <summary>

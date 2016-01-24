@@ -127,6 +127,7 @@ namespace Soukoku.ExpressionParser
             switch (TokenType)
             {
                 case ExpressionTokenType.Field:
+                    if (context == null) { throw new ArgumentNullException("context"); }
                     return context.GetFieldValue(Value).ToString();
                 default:
                     return Value;
@@ -146,9 +147,10 @@ namespace Soukoku.ExpressionParser
                 case ExpressionTokenType.Value:
                 case ExpressionTokenType.SingleQuoted:
                 case ExpressionTokenType.DoubleQuoted:
-                    return double.Parse(Value);
+                    return double.Parse(Value, CultureInfo.CurrentCulture);
                 case ExpressionTokenType.Field:
-                    return double.Parse(context.GetFieldValue(Value).ToString());
+                    if (context == null) { throw new ArgumentNullException("context"); }
+                    return double.Parse(context.GetFieldValue(Value).ToString(), CultureInfo.CurrentCulture);
                 default:
                     throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Cannot convert {0}({1}) to a numeric value.", TokenType, Value));
             }
@@ -167,9 +169,10 @@ namespace Soukoku.ExpressionParser
                 case ExpressionTokenType.Value:
                 case ExpressionTokenType.SingleQuoted:
                 case ExpressionTokenType.DoubleQuoted:
-                    return decimal.Parse(Value);
+                    return decimal.Parse(Value, CultureInfo.CurrentCulture);
                 case ExpressionTokenType.Field:
-                    return decimal.Parse(context.GetFieldValue(Value).ToString());
+                    if (context == null) { throw new ArgumentNullException("context"); }
+                    return decimal.Parse(context.GetFieldValue(Value).ToString(), CultureInfo.CurrentCulture);
                 default:
                     throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Cannot convert {0}({1}) to a numeric value.", TokenType, Value));
             }

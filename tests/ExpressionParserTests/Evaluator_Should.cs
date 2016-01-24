@@ -13,10 +13,12 @@ namespace Soukoku.ExpressionParser
 
         string _input;
         string _result;
-        private void GivenInput(string input)
+        private void GivenInput(string input, EvaluationContext context = null)
         {
+            if (context == null) { context = new EvaluationContext(null); }
+
             _input = input;
-            _result = new Evaluator(new EvaluationContext()).EvaluateInfix(input).Value;
+            _result = new Evaluator(context).EvaluateInfix(input).Value;
         }
 
         private void ExpectResult(string expected)
@@ -95,6 +97,15 @@ namespace Soukoku.ExpressionParser
         {
             GivenInput("pow(2,8)");
             ExpectResult("256");
+        }
+
+        [TestMethod]
+        public void Support_Custom_Function()
+        {
+            var ctx = new EvaluationContext(null);
+            ctx.RegisterFunction("always5", new FunctionInfo(0, (c, p) => new ExpressionToken("5")));
+            GivenInput("always5()", ctx);
+            ExpectResult("5");
         }
     }
 }
