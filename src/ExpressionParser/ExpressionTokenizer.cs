@@ -50,6 +50,8 @@ namespace Soukoku.ExpressionParser
         };
 
 
+        List<ExpressionToken> _currentTokens;
+
         /// <summary>
         /// Splits the specified input into a list of <see cref="ExpressionToken" /> values.
         /// </summary>
@@ -58,134 +60,124 @@ namespace Soukoku.ExpressionParser
         /// <exception cref="System.NotSupportedException"></exception>
         public ExpressionToken[] Tokenize(string input)
         {
-            var tokens = new List<ExpressionToken>();
-            ExpressionToken lastToken = null;
+            _currentTokens = new List<ExpressionToken>();
+            ExpressionToken lastExpToken = null;
 
             var reader = new ListReader<RawToken>(new RawTokenizer().Tokenize(input));
 
             while (!reader.IsEol)
             {
-                var rawToken = reader.ReadNext();
-                switch (rawToken.TokenType)
+                var curRawToken = reader.ReadNext();
+                switch (curRawToken.TokenType)
                 {
                     case RawTokenType.WhiteSpace:
                         // generially ends previous token outside other special scopes
-                        lastToken = null;
+                        lastExpToken = null;
                         break;
                     case RawTokenType.Literal:
-                        if (lastToken == null || lastToken.TokenType != ExpressionTokenType.Value)
+                        if (lastExpToken == null || lastExpToken.TokenType != ExpressionTokenType.Value)
                         {
-                            lastToken = new ExpressionToken { TokenType = ExpressionTokenType.Value };
-                            tokens.Add(lastToken);
+                            lastExpToken = new ExpressionToken { TokenType = ExpressionTokenType.Value };
+                            _currentTokens.Add(lastExpToken);
                         }
-                        lastToken.Append(rawToken);
+                        lastExpToken.Append(curRawToken);
                         break;
                     case RawTokenType.Symbol:
                         // first do operator match by checking the prev op
                         // and see if combined with current token would still match a known operator
-                        if (KnownOperators.ContainsKey(rawToken.Value))
+                        if (KnownOperators.ContainsKey(curRawToken.Value))
                         {
-                            if (lastToken != null && lastToken.TokenType == ExpressionTokenType.Operator)
+                            if (lastExpToken != null && lastExpToken.TokenType == ExpressionTokenType.Operator)
                             {
-                                var testOpValue = lastToken.Value + rawToken.Value;
+                                var testOpValue = lastExpToken.Value + curRawToken.Value;
                                 if (KnownOperators.ContainsKey(testOpValue))
                                 {
                                     // just append it
-                                    lastToken.Append(rawToken);
+                                    lastExpToken.Append(curRawToken);
                                     continue;
                                 }
                             }
                             // start new one
-                            lastToken = new ExpressionToken { TokenType = ExpressionTokenType.Operator };
-                            tokens.Add(lastToken);
-                            lastToken.Append(rawToken);
+                            lastExpToken = new ExpressionToken { TokenType = ExpressionTokenType.Operator };
+                            _currentTokens.Add(lastExpToken);
+                            lastExpToken.Append(curRawToken);
                         }
                         else
                         {
-                            // non-operator symbols
-
-                            switch (rawToken.Value)
-                            {
-                                case ",":
-                                    lastToken = new ExpressionToken { TokenType = ExpressionTokenType.Comma };
-                                    tokens.Add(lastToken);
-                                    lastToken.Append(rawToken);
-                                    break;
-                                case "(":
-                                    // if last one is string make it a function
-                                    if (lastToken != null && lastToken.TokenType == ExpressionTokenType.Value)
-                                    {
-                                        lastToken.TokenType = ExpressionTokenType.Function;
-                                    }
-
-                                    lastToken = new ExpressionToken { TokenType = ExpressionTokenType.OpenParenthesis };
-                                    tokens.Add(lastToken);
-                                    lastToken.Append(rawToken);
-                                    break;
-                                case ")":
-                                    lastToken = new ExpressionToken { TokenType = ExpressionTokenType.CloseParenthesis };
-                                    tokens.Add(lastToken);
-                                    lastToken.Append(rawToken);
-                                    break;
-                                case "{":
-                                    // read until end of }
-                                    lastToken = new ExpressionToken { TokenType = ExpressionTokenType.Field };
-                                    tokens.Add(lastToken);
-                                    while (!reader.IsEol)
-                                    {
-                                        var next = reader.ReadNext();
-                                        if (next.TokenType == RawTokenType.Symbol && next.Value == "}")
-                                        {
-                                            break;
-                                        }
-                                        lastToken.Append(next);
-                                    }
-                                    break;
-                                case "\"":
-                                    // read until end of "
-                                    lastToken = new ExpressionToken { TokenType = ExpressionTokenType.DoubleQuoted };
-                                    tokens.Add(lastToken);
-                                    while (!reader.IsEol)
-                                    {
-                                        var next = reader.ReadNext();
-                                        if (next.TokenType == RawTokenType.Symbol && next.Value == "\"")
-                                        {
-                                            break;
-                                        }
-                                        lastToken.Append(next);
-                                    }
-                                    break;
-                                case "'":
-                                    // read until end of '
-                                    lastToken = new ExpressionToken { TokenType = ExpressionTokenType.SingleQuoted };
-                                    tokens.Add(lastToken);
-                                    while (!reader.IsEol)
-                                    {
-                                        var next = reader.ReadNext();
-                                        if (next.TokenType == RawTokenType.Symbol && next.Value == "'")
-                                        {
-                                            break;
-                                        }
-                                        lastToken.Append(next);
-                                    }
-                                    break;
-                            }
-                            //if(rt.Value[0])
-
+                            lastExpToken = HandleNonOperatorSymbolToken(reader, lastExpToken, curRawToken);
                         }
                         break;
                     default:
                         // should never happen
-                        throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Unsupported token type {0} at position {1}.", rawToken.TokenType, rawToken.Position));
+                        throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Unsupported token type {0} at position {1}.", curRawToken.TokenType, curRawToken.Position));
                 }
             }
 
-            MassageTokens(tokens);
+            MassageTokens(_currentTokens);
 
-            return tokens.ToArray();
+            return _currentTokens.ToArray();
         }
 
-        private void MassageTokens(List<ExpressionToken> tokens)
+        ExpressionToken HandleNonOperatorSymbolToken(ListReader<RawToken> reader, ExpressionToken lastExpToken, RawToken curRawToken)
+        {
+            switch (curRawToken.Value)
+            {
+                case ",":
+                    lastExpToken = new ExpressionToken { TokenType = ExpressionTokenType.Comma };
+                    _currentTokens.Add(lastExpToken);
+                    lastExpToken.Append(curRawToken);
+                    break;
+                case "(":
+                    // if last one is string make it a function
+                    if (lastExpToken != null && lastExpToken.TokenType == ExpressionTokenType.Value)
+                    {
+                        lastExpToken.TokenType = ExpressionTokenType.Function;
+                    }
+
+                    lastExpToken = new ExpressionToken { TokenType = ExpressionTokenType.OpenParenthesis };
+                    _currentTokens.Add(lastExpToken);
+                    lastExpToken.Append(curRawToken);
+                    break;
+                case ")":
+                    lastExpToken = new ExpressionToken { TokenType = ExpressionTokenType.CloseParenthesis };
+                    _currentTokens.Add(lastExpToken);
+                    lastExpToken.Append(curRawToken);
+                    break;
+                case "{":
+                    // read until end of }
+                    lastExpToken = ReadToLiteralAs(reader, "}", ExpressionTokenType.Field);
+                    break;
+                case "\"":
+                    // read until end of "
+                    lastExpToken = ReadToLiteralAs(reader, "\"", ExpressionTokenType.DoubleQuoted);
+                    break;
+                case "'":
+                    // read until end of '
+                    lastExpToken = ReadToLiteralAs(reader, "'", ExpressionTokenType.SingleQuoted);
+                    break;
+            }
+
+            return lastExpToken;
+        }
+
+        ExpressionToken ReadToLiteralAs(ListReader<RawToken> reader, string literalValue, ExpressionTokenType tokenType)
+        {
+            ExpressionToken lastExpToken = new ExpressionToken { TokenType = tokenType };
+            _currentTokens.Add(lastExpToken);
+            while (!reader.IsEol)
+            {
+                var next = reader.ReadNext();
+                if (next.TokenType == RawTokenType.Symbol && next.Value == literalValue)
+                {
+                    break;
+                }
+                lastExpToken.Append(next);
+            }
+
+            return lastExpToken;
+        }
+
+        static void MassageTokens(List<ExpressionToken> tokens)
         {
             // change token type based on detected stuff
             foreach (var tk in tokens)
