@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Soukoku.ExpressionParser
 {
     [TestClass]
-    public class InfixExpressionTokenizer_Should
+    public class InfixTokenizer_Should
     {
         #region utility
 
@@ -15,7 +15,7 @@ namespace Soukoku.ExpressionParser
         private void GivenInput(string input)
         {
             _input = input;
-            _tokens = new InfixExpressionTokenizer().Tokenize(input);
+            _tokens = new InfixTokenizer().Tokenize(input);
         }
 
         private void ExpectValues(params string[] expectedTokens)

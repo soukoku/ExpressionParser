@@ -48,11 +48,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="InfixExpressionTokenizer.cs" />
-    <Compile Include="Util\ListReader.cs" />
+    <Compile Include="ExpressionOperator.cs" />
+    <Compile Include="ExpressionToken.cs" />
+    <Compile Include="InfixTokenizer.cs" />
+    <Compile Include="InfixToPostfixTokenizer.cs" />
+    <Compile Include="Utilities\ListReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\VersionInfo.cs" />
-    <Compile Include="RawTokenizer.cs" />
+    <Compile Include="Utilities\RawToken.cs" />
+    <Compile Include="Utilities\RawTokenizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="CustomDictionary.xml" />

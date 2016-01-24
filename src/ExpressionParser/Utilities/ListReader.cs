@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Soukoku.ExpressionParser.Util
+namespace Soukoku.ExpressionParser.Utilities
 {
     /// <summary>
     /// A simple reader for an IList. 
     /// </summary>
     /// <typeparam name="TItem">The type of the item in the list.</typeparam>
-    class ListReader<TItem>
+    public class ListReader<TItem>
     {
         IList<TItem> _list;
 
@@ -52,27 +52,27 @@ namespace Soukoku.ExpressionParser.Util
         /// <value>
         ///   <c>true</c> if this instance is eol; otherwise, <c>false</c>.
         /// </value>
-        public bool IsEol { get { return _position >= _list.Count; } }
+        public bool IsEnd { get { return _position >= _list.Count; } }
 
         /// <summary>
-        /// Reads the next item in the list and moves the <see cref="Position" /> forward.
+        /// Reads the current item in the list and moves the <see cref="Position" /> forward.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="System.ArgumentOutOfRangeException"></exception>
-        public TItem ReadNext()
+        public TItem Read()
         {
             return _list[Position++];
         }
 
         /// <summary>
-        /// Peeks the next item in the list without moving the <see cref="Position"/>.
+        /// Peeks the current item in the list without moving the <see cref="Position"/>.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="System.ArgumentOutOfRangeException"></exception>
         public TItem Peek()
         {
             // let list throw the exception.
-            return _list[Position + 1];
+            return _list[Position];
         }
     }
 }
