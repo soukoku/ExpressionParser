@@ -70,84 +70,6 @@ namespace Soukoku.ExpressionParser
             return new ExpressionToken("0");
         }
 
-        private void HandleOperator(OperatorType op)
-        {
-            switch (op)
-            {
-                case OperatorType.Addition:
-                    DoBinaryOperation((a, b) => a + b);
-                    break;
-                case OperatorType.Subtraction:
-                    DoBinaryOperation((a, b) => a - b);
-                    break;
-                case OperatorType.Multiplication:
-                    DoBinaryOperation((a, b) => a * b);
-                    break;
-                case OperatorType.Division:
-                    DoBinaryOperation((a, b) => a / b);
-                    break;
-                case OperatorType.Modulus:
-                    DoBinaryOperation((a, b) => a % b);
-                    break;
-                //TODO: these logical comparision are very badly implemented
-                case OperatorType.LessThan:
-                    DoBinaryOperation((a, b) => a < b ? 1 : 0);
-                    break;
-                case OperatorType.LessThanOrEqual:
-                    DoBinaryOperation((a, b) => a <= b ? 1 : 0);
-                    break;
-                case OperatorType.GreaterThan:
-                    DoBinaryOperation((a, b) => a > b ? 1 : 0);
-                    break;
-                case OperatorType.GreaterThanOrEqual:
-                    DoBinaryOperation((a, b) => a >= b ? 1 : 0);
-                    break;
-                case OperatorType.Equal:
-                    DoBinaryOperation((a, b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase));
-                    break;
-                case OperatorType.NotEqual:
-                    DoBinaryOperation((a, b) => !string.Equals(a, b, StringComparison.OrdinalIgnoreCase));
-                    break;
-                case OperatorType.BitwiseAnd:
-                    DoBinaryOperation((a, b) => (int)a & (int)b);
-                    break;
-                case OperatorType.BitwiseOr:
-                    DoBinaryOperation((a, b) => (int)a | (int)b);
-                    break;
-                case OperatorType.LogicalAnd:
-                    DoBinaryOperation((a, b) => ToBool(a) && ToBool(b));
-                    break;
-                case OperatorType.LogicalOr:
-                    DoBinaryOperation((a, b) => ToBool(a) || ToBool(b));
-                    break;
-                // TODO: assignments & unary ops
-                default:
-                    throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "The {0} operation is not currently supported.", op));
-            }
-        }
-
-        static bool ToBool(string value)
-        {
-            return string.Equals("true", value) || value == "1";
-        }
-
-        void DoBinaryOperation(Func<string, string, bool> operation)
-        {
-            var op2 = _stack.Pop();
-            var op1 = _stack.Pop();
-
-            var val = operation(op1.ToString(_context), op2.ToString(_context)) ? "1" : "0";
-
-            _stack.Push(new ExpressionToken(val));
-        }
-        void DoBinaryOperation(Func<decimal, decimal, decimal> operation)
-        {
-            var op2 = _stack.Pop().ToDecimal(_context);
-            var op1 = _stack.Pop().ToDecimal(_context);
-
-            _stack.Push(new ExpressionToken(operation(op1, op2).ToString(CultureInfo.CurrentCulture)));
-        }
-
         private void HandleFunction(string functionName)
         {
             var fun = _context.GetFunction(functionName);
@@ -160,5 +82,112 @@ namespace Soukoku.ExpressionParser
 
             _stack.Push(fun.Evaluate(_context, args.ToArray()));
         }
+
+        #region operator handling
+
+        private void HandleOperator(OperatorType op)
+        {
+            switch (op)
+            {
+                case OperatorType.Addition:
+                    BinaryNumberOperation((a, b) => a + b);
+                    break;
+                case OperatorType.Subtraction:
+                    BinaryNumberOperation((a, b) => a - b);
+                    break;
+                case OperatorType.Multiplication:
+                    BinaryNumberOperation((a, b) => a * b);
+                    break;
+                case OperatorType.Division:
+                    BinaryNumberOperation((a, b) => a / b);
+                    break;
+                case OperatorType.Modulus:
+                    BinaryNumberOperation((a, b) => a % b);
+                    break;
+                //TODO: these logical comparision are likely very badly implemented
+                case OperatorType.LessThan:
+                    BinaryNumberOperation((a, b) => a < b ? 1 : 0);
+                    break;
+                case OperatorType.LessThanOrEqual:
+                    BinaryNumberOperation((a, b) => a <= b ? 1 : 0);
+                    break;
+                case OperatorType.GreaterThan:
+                    BinaryNumberOperation((a, b) => a > b ? 1 : 0);
+                    break;
+                case OperatorType.GreaterThanOrEqual:
+                    BinaryNumberOperation((a, b) => a >= b ? 1 : 0);
+                    break;
+                case OperatorType.Equal:
+                    BinaryLogicOperation((a, b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase));
+                    break;
+                case OperatorType.NotEqual:
+                    BinaryLogicOperation((a, b) => !string.Equals(a, b, StringComparison.OrdinalIgnoreCase));
+                    break;
+                case OperatorType.BitwiseAnd:
+                    BinaryNumberOperation((a, b) => (int)a & (int)b);
+                    break;
+                case OperatorType.BitwiseOr:
+                    BinaryNumberOperation((a, b) => (int)a | (int)b);
+                    break;
+                case OperatorType.LogicalAnd:
+                    BinaryLogicOperation((a, b) => IsTrue(a) && IsTrue(b));
+                    break;
+                case OperatorType.LogicalOr:
+                    BinaryLogicOperation((a, b) => IsTrue(a) || IsTrue(b));
+                    break;
+                case OperatorType.UnaryMinus:
+                    UnaryNumberOperation(a => -1 * a);
+                    break;
+                case OperatorType.UnaryPlus:
+                    // no action
+                    break;
+                case OperatorType.Negation:
+                    UnaryLogicOperation(a => !IsTrue(a));
+                    break;
+                // TODO: assignments
+                default:
+                    throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "The {0} operation is not currently supported.", op));
+            }
+        }
+
+        static bool IsTrue(string value)
+        {
+            return string.Equals("true", value) || value == "1";
+        }
+
+        void UnaryNumberOperation(Func<decimal, decimal> operation)
+        {
+            var op1 = _stack.Pop().ToDecimal(_context);
+            var res = operation(op1);
+
+            _stack.Push(new ExpressionToken(res.ToString(CultureInfo.CurrentCulture)));
+        }
+        void UnaryLogicOperation(Func<string, bool> operation)
+        {
+            var op1 = _stack.Pop();
+            var res = operation(op1.ToString(_context)) ? "1" : "0";
+
+            _stack.Push(new ExpressionToken(res));
+        }
+        void BinaryLogicOperation(Func<string, string, bool> operation)
+        {
+            var op2 = _stack.Pop();
+            var op1 = _stack.Pop();
+
+            var res = operation(op1.ToString(_context), op2.ToString(_context)) ? "1" : "0";
+
+            _stack.Push(new ExpressionToken(res));
+        }
+        void BinaryNumberOperation(Func<decimal, decimal, decimal> operation)
+        {
+            var op2 = _stack.Pop().ToDecimal(_context);
+            var op1 = _stack.Pop().ToDecimal(_context);
+
+            var res = operation(op1, op2);
+
+            _stack.Push(new ExpressionToken(res.ToString(CultureInfo.CurrentCulture)));
+        }
+
+        #endregion
     }
 }

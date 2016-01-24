@@ -81,6 +81,25 @@ namespace Soukoku.ExpressionParser
             ExpectResult("1200");
         }
 
+        [TestMethod]
+        public void Handle_Unary_Minus()
+        {
+            GivenInput("100 + -50");
+            ExpectResult("50");
+
+            GivenInput("100 - -50");
+            ExpectResult("150");
+        }
+
+        [TestMethod]
+        public void Handle_Unary_Plus()
+        {
+            GivenInput("100 - +50");
+            ExpectResult("50");
+
+            GivenInput("100 + +50");
+            ExpectResult("150");
+        }
 
         [TestMethod]
         public void Use_1_OR_0_For_Logical_Result()
@@ -90,6 +109,16 @@ namespace Soukoku.ExpressionParser
 
             GivenInput("100 != 100");
             ExpectResult("0");
+        }
+
+        [TestMethod]
+        public void Handle_Unary_Negate()
+        {
+            GivenInput("!(100==100)");
+            ExpectResult("0");
+
+            GivenInput("!(100!=100)");
+            ExpectResult("1");
         }
 
         [TestMethod]
@@ -107,5 +136,7 @@ namespace Soukoku.ExpressionParser
             GivenInput("always5()", ctx);
             ExpectResult("5");
         }
+
+
     }
 }
