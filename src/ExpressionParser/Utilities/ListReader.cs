@@ -76,5 +76,16 @@ namespace Soukoku.ExpressionParser.Utilities
             // let list throw the exception.
             return _list[Position];
         }
+
+        /// <summary>
+        /// Peeks the previous item in the list without moving the <see cref="Position"/>.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentOutOfRangeException"></exception>
+        public TItem PeekBehind()
+        {
+            // let list throw the exception.
+            return _list[Position - 1];
+        }
     }
 }

@@ -52,6 +52,15 @@ namespace Soukoku.ExpressionParser
         }
 
         [TestMethod]
+        public void Keep_Position_On_PeekBehind()
+        {
+            var reader = GivenList(5);
+            reader.Read();
+            Assert.AreEqual(5, reader.PeekBehind());
+            Assert.AreEqual(1, reader.Position);
+        }
+
+        [TestMethod]
         public void Make_Position_Same_As_List_Length_At_End()
         {
             var reader = GivenList(5, 6, 7);
@@ -78,6 +87,14 @@ namespace Soukoku.ExpressionParser
             var reader = GivenList(1);
             reader.Read();
             reader.Peek();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void Throw_ArgOutRange_When_PeekBehind_Beyond_List()
+        {
+            var reader = GivenList(1);
+            reader.PeekBehind();
         }
 
         [TestMethod]

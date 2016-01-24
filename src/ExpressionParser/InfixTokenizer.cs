@@ -10,7 +10,7 @@ namespace Soukoku.ExpressionParser
     /// <summary>
     /// A tokenizer that parses an input expression string in infix notation into tokens without white spaces.
     /// </summary>
-    public class InfixTokenizer
+    public class InfixTokenizer : IExpressionTokenizer
     {
         List<ExpressionToken> _currentTokens;
 
@@ -141,7 +141,8 @@ namespace Soukoku.ExpressionParser
 
         static void MassageTokens(List<ExpressionToken> tokens)
         {
-            // change token type based on detected stuff
+            // do final token parsing based on contexts and cleanup
+
             var reader = new ListReader<ExpressionToken>(tokens);
             while (!reader.IsEnd)
             {
@@ -151,83 +152,26 @@ namespace Soukoku.ExpressionParser
                 if (tk.TokenType == ExpressionTokenType.Operator)
                 {
                     // special detection for operators depending on where it is :(
-                    switch (tk.Value)
-                    {
-                        // TODO: detect post ++ -- versions
-                        case "++":
-                            tk.OperatorType = OperatorType.PreDecrement;
-                            break;
-                        case "--":
-                            tk.OperatorType = OperatorType.PreDecrement;
-                            break;
-                        case "+=":
-                            tk.OperatorType = OperatorType.AdditionAssignment;
-                            break;
-                        case "-=":
-                            tk.OperatorType = OperatorType.SubtractionAssignment;
-                            break;
-                        case "*=":
-                            tk.OperatorType = OperatorType.MultiplicationAssignment;
-                            break;
-                        case "/=":
-                            tk.OperatorType = OperatorType.DivisionAssignment;
-                            break;
-                        case "%=":
-                            tk.OperatorType = OperatorType.ModulusAssignment;
-                            break;
-                        case "==":
-                            tk.OperatorType = OperatorType.Equal;
-                            break;
-                        case "!=":
-                            tk.OperatorType = OperatorType.NotEqual;
-                            break;
-                        case "<=":
-                            tk.OperatorType = OperatorType.LessThanOrEqual;
-                            break;
-                        case ">=":
-                            tk.OperatorType = OperatorType.GreaterThanOrEqual;
-                            break;
-                        case "&&":
-                            tk.OperatorType = OperatorType.LogicalAnd;
-                            break;
-                        case "||":
-                            tk.OperatorType = OperatorType.LogicalOr;
-                            break;
-
-                            // TODO: detect unary versions of + -
-                        case "+":
-                            tk.OperatorType = OperatorType.Addition;
-                            break;
-                        case "-":
-                            tk.OperatorType = OperatorType.Subtraction;
-                            break;
-                        case "*":
-                            tk.OperatorType = OperatorType.Multiplication;
-                            break;
-                        case "/":
-                            tk.OperatorType = OperatorType.Division;
-                            break;
-                        case "=":
-                            tk.OperatorType = OperatorType.Assignment;
-                            break;
-                        case "%":
-                            tk.OperatorType = OperatorType.Modulus;
-                            break;
-                        //case "^": tk.OperatorType = OperatorType.
-                        case "<":
-                            tk.OperatorType = OperatorType.LessThan;
-                            break;
-                        case ">":
-                            tk.OperatorType = OperatorType.GreaterThan;
-                            break;
-                        //case "~": tk.OperatorType = OperatorType.
-                        //case "&": tk.OperatorType = OperatorType.
-                        //case "|": tk.OperatorType = OperatorType.
-                        case "!":
-                            tk.OperatorType = OperatorType.Negation;
-                            break;
-                    }
+                    DetermineOperatorType(tk);
                 }
+            }
+        }
+
+        private static void DetermineOperatorType(ExpressionToken tk)
+        {
+            tk.OperatorType = KnownOperators.TryMap(tk.Value);
+            switch (tk.OperatorType)
+            {
+                case OperatorType.PreDecrement:
+                case OperatorType.PreIncrement:
+                    // TODO: detect if it's really post ++ -- versions 
+                    break;
+                case OperatorType.Addition:
+                case OperatorType.Subtraction:
+                    // TODO: detect unary versions of + -
+                    break;
+                case OperatorType.None:
+                    throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Operator {0} is not supported.", tk.Value));
             }
         }
     }

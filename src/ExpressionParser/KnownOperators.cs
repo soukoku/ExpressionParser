@@ -10,42 +10,84 @@ namespace Soukoku.ExpressionParser
     /// </summary>
     public static class KnownOperators
     {
-        static readonly string[] KnownList = new[]
+        //static readonly string[] KnownList = new[]
+        //{
+        //    // double char
+        //    "++",
+        //    "--",
+        //    "+=",
+        //    "-=",
+        //    "*=",
+        //    "/=",
+        //    "%=",
+        //    "==",
+        //    "!=",
+        //    "<=",
+        //    ">=",
+        //    "&&",
+        //    "||",
+
+        //    // single char
+        //    "+",
+        //    "-",
+        //    "*",
+        //    "/",
+        //    "=",
+        //    "%", 
+        //    //"^",
+        //    "<",
+        //    ">", 
+        //    //"~",
+        //    "&",
+        //    "|",
+        //    "!",
+        //};
+
+        static readonly Dictionary<string, OperatorType> DefaultMap = new Dictionary<string, OperatorType>
         {
             // double char
-            "++",
-            "--",
-            "+=",
-            "-=",
-            "*=",
-            "/=",
-            "%=",
-            "==",
-            "!=",
-            "<=",
-            ">=",
-            "&&",
-            "||",
+            {"++", OperatorType.PreDecrement },
+            {"--", OperatorType.PreDecrement },
+            {"+=", OperatorType.AdditionAssignment },
+            {"-=", OperatorType.SubtractionAssignment },
+            {"*=", OperatorType.MultiplicationAssignment },
+            {"/=", OperatorType.DivisionAssignment },
+            {"%=", OperatorType.ModulusAssignment },
+            {"==", OperatorType.Equal },
+            {"!=", OperatorType.NotEqual},
+            {"<=", OperatorType.LessThanOrEqual },
+            {">=", OperatorType.GreaterThan },
+            {"&&", OperatorType.LogicalAnd },
+            {"||", OperatorType.LogicalOr },
 
             // single char
-            "+",
-            "-",
-            "*",
-            "/",
-            "=",
-            "%", 
+            {"+", OperatorType.Addition },
+            {"-", OperatorType.Subtraction },
+            {"*", OperatorType.Multiplication },
+            {"/", OperatorType.Division },
+            {"=", OperatorType.Assignment },
+            {"%", OperatorType.Modulus },
             //"^",
-            "<",
-            ">", 
+            {"<", OperatorType.LessThan },
+            {">", OperatorType.GreaterThan },
             //"~",
-            "&",
-            "|",
-            "!", 
+            {"&", OperatorType.BitwiseAnd },
+            {"|", OperatorType.BitwiseOr },
+            {"!", OperatorType.Negation },
         };
 
         public static bool IsKnown(string operatorValue)
         {
-            return KnownList.Contains(operatorValue);
+            return DefaultMap.ContainsKey(operatorValue);
+        }
+
+        public static OperatorType TryMap(string operatorValue)
+        {
+            if (DefaultMap.ContainsKey(operatorValue))
+            {
+                return DefaultMap[operatorValue];
+            }
+            return OperatorType.None;
         }
 
         public static int GetPrecedence(OperatorType type)
@@ -76,6 +118,9 @@ namespace Soukoku.ExpressionParser
                 case OperatorType.Equal:
                 case OperatorType.NotEqual:
                     return 70;
+                case OperatorType.BitwiseAnd:
+                case OperatorType.BitwiseOr:
+                    return 65;
                 case OperatorType.LogicalAnd:
                 case OperatorType.LogicalOr:
                     return 60;
@@ -188,6 +233,14 @@ namespace Soukoku.ExpressionParser
         /// != between values.
         /// </summary>
         NotEqual,
+        /// <summary>
+        /// & between values.
+        /// </summary>
+        BitwiseAnd,
+        /// <summary>
+        /// | between values.
+        /// </summary>
+        BitwiseOr,
         /// <summary>
         /// &amp;&amp; between values.
         /// </summary>
