@@ -78,14 +78,15 @@ namespace Soukoku.ExpressionParser.Utilities
         }
 
         /// <summary>
-        /// Peeks the previous item in the list without moving the <see cref="Position"/>.
+        /// Peeks the item in the list without moving the <see cref="Position" />.
         /// </summary>
+        /// <param name="offset">The offset from current position.</param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentOutOfRangeException"></exception>
-        public TItem PeekBehind()
+        public TItem Peek(int offset)
         {
             // let list throw the exception.
-            return _list[Position - 1];
+            return _list[Position + offset];
         }
     }
 }

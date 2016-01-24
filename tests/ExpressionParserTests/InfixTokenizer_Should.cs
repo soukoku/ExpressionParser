@@ -81,20 +81,72 @@ namespace Soukoku.ExpressionParser
         [TestMethod]
         public void Recognize_MultiChar_Operators()
         {
-            GivenInput("test && ab++ * 5");
-            ExpectValues("test", "&&", "ab",
-                "++", "*", "5");
+            GivenInput("test && ab <= 5");
+            ExpectValues("test", "&&", "ab", "<=", "5");
             ExpectTypes(ExpressionTokenType.Value, ExpressionTokenType.Operator, ExpressionTokenType.Value,
-                ExpressionTokenType.Operator, ExpressionTokenType.Operator, ExpressionTokenType.Value);
+                ExpressionTokenType.Operator, ExpressionTokenType.Value);
         }
 
         [TestMethod]
-        public void Recognize_Ambiguous_MultiChar_Operators()
+        public void Recognize_PreIncrement_Operators()
+        {
+            GivenInput("++test + ++5");
+            ExpectValues("++", "test", "+", "++", "5");
+            ExpectTypes(ExpressionTokenType.Operator, ExpressionTokenType.Value, ExpressionTokenType.Operator, 
+                ExpressionTokenType.Operator, ExpressionTokenType.Value);
+
+            Assert.AreEqual(OperatorType.PreIncrement, _tokens[0].OperatorType);
+            Assert.AreEqual(OperatorType.Addition, _tokens[2].OperatorType);
+            Assert.AreEqual(OperatorType.PreIncrement, _tokens[3].OperatorType);
+        }
+
+        [TestMethod]
+        public void Recognize_PreDecrement_Operators()
+        {
+            GivenInput("--test - --5");
+            ExpectValues("--", "test", "-", "--", "5");
+            ExpectTypes(ExpressionTokenType.Operator, ExpressionTokenType.Value, ExpressionTokenType.Operator,
+                ExpressionTokenType.Operator, ExpressionTokenType.Value);
+
+            Assert.AreEqual(OperatorType.PreDecrement, _tokens[0].OperatorType);
+            Assert.AreEqual(OperatorType.Subtraction, _tokens[2].OperatorType);
+            Assert.AreEqual(OperatorType.PreDecrement, _tokens[3].OperatorType);
+        }
+
+        [TestMethod]
+        public void Recognize_PostIncrement_Operators()
+        {
+            GivenInput("test++ + 5");
+            ExpectValues("test", "++", "+", "5");
+            ExpectTypes(ExpressionTokenType.Value, ExpressionTokenType.Operator,
+                ExpressionTokenType.Operator, ExpressionTokenType.Value);
+
+            Assert.AreEqual(OperatorType.PostIncrement, _tokens[1].OperatorType);
+            Assert.AreEqual(OperatorType.Addition, _tokens[2].OperatorType);
+        }
+
+        [TestMethod]
+        public void Recognize_PostDecrement_Operators()
+        {
+            GivenInput("test-- - 5");
+            ExpectValues("test", "--", "-", "5");
+            ExpectTypes(ExpressionTokenType.Value, ExpressionTokenType.Operator,
+                ExpressionTokenType.Operator, ExpressionTokenType.Value);
+
+            Assert.AreEqual(OperatorType.PostDecrement, _tokens[1].OperatorType);
+            Assert.AreEqual(OperatorType.Subtraction, _tokens[2].OperatorType);
+        }
+
+        [TestMethod]
+        public void Recognize_Ambiguous_PostIncrement_Operators()
         {
             GivenInput("test+++ 5"); // the canonical ++ and + operators without space example
             ExpectValues("test", "++", "+", "5");
             ExpectTypes(ExpressionTokenType.Value, ExpressionTokenType.Operator,
                 ExpressionTokenType.Operator, ExpressionTokenType.Value);
+
+            Assert.AreEqual(OperatorType.PostIncrement, _tokens[1].OperatorType);
+            Assert.AreEqual(OperatorType.Addition, _tokens[2].OperatorType);
         }
 
 
@@ -164,5 +216,34 @@ namespace Soukoku.ExpressionParser
             ExpectTypes(ExpressionTokenType.Function, ExpressionTokenType.OpenParenthesis, ExpressionTokenType.Value, ExpressionTokenType.CloseParenthesis);
         }
 
+        [TestMethod]
+        public void Handle_Unary_PlusMinus_As_First_Token()
+        {
+            GivenInput("-3");
+            ExpectValues("-", "3");
+            ExpectTypes(ExpressionTokenType.Operator, ExpressionTokenType.Value);
+            Assert.AreEqual(OperatorType.UnaryMinus, _tokens[0].OperatorType);
+
+            GivenInput("+3");
+            ExpectValues("+", "3");
+            ExpectTypes(ExpressionTokenType.Operator, ExpressionTokenType.Value);
+            Assert.AreEqual(OperatorType.UnaryPlus, _tokens[0].OperatorType);
+        }
+
+        [TestMethod]
+        public void Handle_Unary_PlusMinus_After_Operator()
+        {
+            GivenInput("5 + -3");
+            ExpectValues("5", "+", "-", "3");
+            ExpectTypes(ExpressionTokenType.Value, ExpressionTokenType.Operator, ExpressionTokenType.Operator, ExpressionTokenType.Value);
+            Assert.AreEqual(OperatorType.Addition, _tokens[1].OperatorType);
+            Assert.AreEqual(OperatorType.UnaryMinus, _tokens[2].OperatorType);
+
+            GivenInput("5 - +3");
+            ExpectValues("5", "-", "+", "3");
+            ExpectTypes(ExpressionTokenType.Value, ExpressionTokenType.Operator, ExpressionTokenType.Operator, ExpressionTokenType.Value);
+            Assert.AreEqual(OperatorType.Subtraction, _tokens[1].OperatorType);
+            Assert.AreEqual(OperatorType.UnaryPlus, _tokens[2].OperatorType);
+        }
     }
 }

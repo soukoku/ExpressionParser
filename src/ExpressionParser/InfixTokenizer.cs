@@ -147,28 +147,56 @@ namespace Soukoku.ExpressionParser
             while (!reader.IsEnd)
             {
                 var tk = reader.Read();
-                tk.Freeze();
 
                 if (tk.TokenType == ExpressionTokenType.Operator)
                 {
                     // special detection for operators depending on where it is :(
-                    DetermineOperatorType(tk);
+                    DetermineOperatorType(reader, tk);
                 }
+
+                tk.Freeze();
             }
         }
 
-        private static void DetermineOperatorType(ExpressionToken tk)
+        private static void DetermineOperatorType(ListReader<ExpressionToken> reader, ExpressionToken tk)
         {
             tk.OperatorType = KnownOperators.TryMap(tk.Value);
             switch (tk.OperatorType)
             {
                 case OperatorType.PreDecrement:
                 case OperatorType.PreIncrement:
-                    // TODO: detect if it's really post ++ -- versions 
+                    // detect if it's really post ++ -- versions 
+                    var prev = reader.Position > 1 ? reader.Peek(-2) : null;
+                    if (prev != null && prev.TokenType == ExpressionTokenType.Value)
+                    {
+                        if (tk.OperatorType == OperatorType.PreIncrement)
+                        {
+                            tk.OperatorType = OperatorType.PostIncrement;
+                        }
+                        else
+                        {
+                            tk.OperatorType = OperatorType.PostDecrement;
+                        }
+                    }
                     break;
                 case OperatorType.Addition:
                 case OperatorType.Subtraction:
-                    // TODO: detect unary versions of + -
+                    // detect if unary + -
+                    prev = reader.Position > 1 ? reader.Peek(-2) : null;
+                    if (prev == null ||
+                        (prev.TokenType == ExpressionTokenType.Operator &&
+                        prev.OperatorType != OperatorType.PostDecrement &&
+                        prev.OperatorType != OperatorType.PostIncrement))
+                    {
+                        if (tk.OperatorType == OperatorType.Addition)
+                        {
+                            tk.OperatorType = OperatorType.UnaryPlus;
+                        }
+                        else
+                        {
+                            tk.OperatorType = OperatorType.UnaryMinus;
+                        }
+                    }
                     break;
                 case OperatorType.None:
                     throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Operator {0} is not supported.", tk.Value));

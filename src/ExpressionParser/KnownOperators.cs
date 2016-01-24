@@ -46,7 +46,7 @@ namespace Soukoku.ExpressionParser
         static readonly Dictionary<string, OperatorType> DefaultMap = new Dictionary<string, OperatorType>
         {
             // double char
-            {"++", OperatorType.PreDecrement },
+            {"++", OperatorType.PreIncrement },
             {"--", OperatorType.PreDecrement },
             {"+=", OperatorType.AdditionAssignment },
             {"-=", OperatorType.SubtractionAssignment },
