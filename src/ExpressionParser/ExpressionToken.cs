@@ -11,6 +11,23 @@ namespace Soukoku.ExpressionParser
     /// </summary>
     public class ExpressionToken
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExpressionToken"/> class.
+        /// </summary>
+        public ExpressionToken() { }
+
+        /// <summary>
+        /// Initializes a new frozen instance of the <see cref="ExpressionToken"/> class
+        /// with the specified value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        public ExpressionToken(string value)
+        {
+            _type = ExpressionTokenType.Value;
+            _value = value;
+        }
+
+
         RawToken _rawToken; // the raw token that makes this token
 
         /// <summary>
@@ -76,6 +93,7 @@ namespace Soukoku.ExpressionParser
         public OperatorType OperatorType { get; set; }
 
         string _value;
+
         /// <summary>
         /// Gets the token value.
         /// </summary>
@@ -94,7 +112,7 @@ namespace Soukoku.ExpressionParser
         {
             return Value;
         }
-        
+
     }
 
     /// <summary>

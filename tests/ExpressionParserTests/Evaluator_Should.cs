@@ -55,5 +55,25 @@ namespace Soukoku.ExpressionParser
             ExpectResult(200);
         }
 
+        [TestMethod]
+        public void Handle_Multi_Operation_With_Same_Precedence()
+        {
+            GivenInput("100 + 50 - 50");
+            ExpectResult(100);
+        }
+
+        [TestMethod]
+        public void Handle_Multi_Operation_With_Different_Precedence()
+        {
+            GivenInput("100 + 2 * 10");
+            ExpectResult(120);
+        }
+
+        [TestMethod]
+        public void Handle_Multi_Operation_With_Parenthesis()
+        {
+            GivenInput("(100 + 2) * 10");
+            ExpectResult(1020);
+        }
     }
 }
