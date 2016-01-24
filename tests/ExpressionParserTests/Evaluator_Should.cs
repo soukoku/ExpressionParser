@@ -132,7 +132,7 @@ namespace Soukoku.ExpressionParser
         public void Support_Custom_Function()
         {
             var ctx = new EvaluationContext(null);
-            ctx.RegisterFunction("always5", new FunctionInfo(0, (c, p) => new ExpressionToken("5")));
+            ctx.RegisterFunction("always5", new FunctionRoutine(0, (c, p) => new ExpressionToken("5")));
             GivenInput("always5()", ctx);
             ExpectResult("5");
         }

@@ -11,26 +11,28 @@ namespace Soukoku.ExpressionParser
     /// </summary>
     public class EvaluationContext
     {
-        static Dictionary<string, FunctionInfo> BuiltInFunctions = new Dictionary<string, FunctionInfo>
+        static Dictionary<string, FunctionRoutine> BuiltInFunctions = new Dictionary<string, FunctionRoutine>(StringComparer.OrdinalIgnoreCase)
         {
-            { "pow", new FunctionInfo(2, (ctx, args)=>
+            { "pow", new FunctionRoutine(2, (ctx, args)=>
                     new ExpressionToken( Math.Pow(args[0].ToDouble(ctx), args[1].ToDouble(ctx)).ToString(CultureInfo.CurrentCulture))) },
-            { "sin", new FunctionInfo(1, (ctx, args)=>
+            { "sin", new FunctionRoutine(1, (ctx, args)=>
                     new ExpressionToken( Math.Sin(args[0].ToDouble(ctx)).ToString(CultureInfo.CurrentCulture)))},
-            { "cos", new FunctionInfo(1, (ctx, args)=>
+            { "cos", new FunctionRoutine(1, (ctx, args)=>
                     new ExpressionToken( Math.Cos(args[0].ToDouble(ctx)).ToString(CultureInfo.CurrentCulture)))},
-            { "tan", new FunctionInfo(1, (ctx, args)=>
+            { "tan", new FunctionRoutine(1, (ctx, args)=>
                     new ExpressionToken( Math.Tan(args[0].ToDouble(ctx)).ToString(CultureInfo.CurrentCulture)))}
         };
 
-        Dictionary<string, FunctionInfo> _instanceFuncs = new Dictionary<string, FunctionInfo>();
+        static readonly Dictionary<string, FunctionRoutine> __staticFuncs = new Dictionary<string, FunctionRoutine>(StringComparer.OrdinalIgnoreCase);
+        readonly Dictionary<string, FunctionRoutine> _instanceFuncs = new Dictionary<string, FunctionRoutine>(StringComparer.OrdinalIgnoreCase);
+
         Func<string, object> _fieldLookup;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EvaluationContext"/> class.
         /// </summary>
         /// <param name="fieldLookupRoutine">The field value lookup routine.</param>
-        public EvaluationContext(Func<string,object> fieldLookupRoutine)
+        public EvaluationContext(Func<string, object> fieldLookupRoutine)
         {
             _fieldLookup = fieldLookupRoutine;
         }
@@ -47,11 +49,21 @@ namespace Soukoku.ExpressionParser
         }
 
         /// <summary>
-        /// Registers a function with this context.
+        /// Registers a custom function globally.
         /// </summary>
         /// <param name="functionName">Name of the function.</param>
         /// <param name="info">The information.</param>
-        public void RegisterFunction(string functionName, FunctionInfo info)
+        public static void RegisterGlobalFunction(string functionName, FunctionRoutine info)
+        {
+            __staticFuncs[functionName] = info;
+        }
+
+        /// <summary>
+        /// Registers a custom function with this context instance.
+        /// </summary>
+        /// <param name="functionName">Name of the function.</param>
+        /// <param name="info">The information.</param>
+        public void RegisterFunction(string functionName, FunctionRoutine info)
         {
             _instanceFuncs[functionName] = info;
         }
@@ -62,11 +74,15 @@ namespace Soukoku.ExpressionParser
         /// <param name="functionName">Name of the function.</param>
         /// <returns></returns>
         /// <exception cref="System.NotSupportedException"></exception>
-        public FunctionInfo GetFunction(string functionName)
+        public FunctionRoutine GetFunction(string functionName)
         {
             if (_instanceFuncs.ContainsKey(functionName))
             {
                 return _instanceFuncs[functionName];
+            }
+            if (__staticFuncs.ContainsKey(functionName))
+            {
+                return __staticFuncs[functionName];
             }
             if (BuiltInFunctions.ContainsKey(functionName))
             {
@@ -76,40 +92,4 @@ namespace Soukoku.ExpressionParser
         }
     }
 
-    /// <summary>
-    /// Defines a basic function routine.
-    /// </summary>
-    public class FunctionInfo
-    {
-        Func<EvaluationContext, ExpressionToken[], ExpressionToken> _routine;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FunctionInfo"/> class.
-        /// </summary>
-        /// <param name="argCount">The argument count.</param>
-        /// <param name="routine">The routine.</param>
-        /// <exception cref="System.ArgumentNullException">routine</exception>
-        public FunctionInfo(int argCount, Func<EvaluationContext, ExpressionToken[], ExpressionToken> routine)
-        {
-            if (routine == null) { throw new ArgumentNullException("routine"); }
-            ArgumentCount = argCount;
-            _routine = routine;
-        }
-
-        /// <summary>
-        /// Gets the expected argument count.
-        /// </summary>
-        /// <value>
-        /// The argument count.
-        /// </value>
-        public int ArgumentCount { get; private set; }
-
-        /// <summary>
-        /// Evaluates using the function routine.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="args">The arguments.</param>
-        /// <returns></returns>
-        public ExpressionToken Evaluate(EvaluationContext context, ExpressionToken[] args) { return _routine(context, args); }
-    }
 }

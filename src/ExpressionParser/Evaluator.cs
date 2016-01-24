@@ -141,7 +141,7 @@ namespace Soukoku.ExpressionParser
                 case OperatorType.UnaryPlus:
                     // no action
                     break;
-                case OperatorType.Negation:
+                case OperatorType.LogicalNegation:
                     UnaryLogicOperation(a => !IsTrue(a));
                     break;
                 // TODO: assignments
@@ -152,7 +152,7 @@ namespace Soukoku.ExpressionParser
 
         static bool IsTrue(string value)
         {
-            return string.Equals("true", value) || value == "1";
+            return string.Equals("true", value, StringComparison.OrdinalIgnoreCase) || value == "1";
         }
 
         void UnaryNumberOperation(Func<decimal, decimal> operation)
