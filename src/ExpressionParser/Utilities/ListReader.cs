@@ -5,8 +5,6 @@ using System.Text;
 
 namespace Soukoku.ExpressionParser.Utilities
 {
-    // this function could just be a stack but I'm keeping it for now.
-
     /// <summary>
     /// A simple reader for an IList. 
     /// </summary>
@@ -73,8 +71,7 @@ namespace Soukoku.ExpressionParser.Utilities
         /// <exception cref="System.ArgumentOutOfRangeException"></exception>
         public TItem Peek()
         {
-            // let list throw the exception.
-            return _list[Position];
+            return Peek(0);
         }
 
         /// <summary>

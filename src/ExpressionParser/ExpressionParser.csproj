@@ -48,6 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EvaluationContext.cs" />
+    <Compile Include="Evaluator.cs" />
     <Compile Include="IExpressionTokenizer.cs" />
     <Compile Include="KnownOperators.cs" />
     <Compile Include="ExpressionToken.cs" />
