@@ -7,36 +7,46 @@ using System.Text.RegularExpressions;
 namespace Soukoku.ExpressionParser
 {
     /// <summary>
-    /// The initial input string tokenizer.
+    /// A low-level tokenizer that parses an input expression string into tokens.
     /// </summary>
     public class RawTokenizer
     {
-        static readonly char[] __defaultSymbols = new[]
+        static readonly char[] DefaultSymbols = new[]
             {
                 '+', '-', '*', '/', '=', '%', '^',
                 ',', '<', '>', '&', '|', '!',
-                '(', ')', '{', '}', '[', ']'
+                '(', ')', '{', '}', '[', ']',
+                '"', '\''
             };
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RawTokenizer"/> class.
+        /// </summary>
+        public RawTokenizer() : this(null) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RawTokenizer" /> class.
         /// </summary>
-        /// <param name="symbols">The char values to count as symbols. If null a default set will be used.</param>
-        public RawTokenizer(char[] symbols = null)
+        /// <param name="symbols">The char values to count as symbols. If null the <see cref="DefaultSymbols"/> will be used.</param>
+        public RawTokenizer(char[] symbols)
         {
-            Symbols = symbols ?? __defaultSymbols;
+            _symbols = symbols ?? DefaultSymbols;
         }
 
+        char[] _symbols;
+
         /// <summary>
-        /// Gets the char values that count as symbols.
+        /// Gets the char values that count as symbols for this tokenizer.
         /// </summary>
         /// <value>
         /// The symbols.
         /// </value>
-        public char[] Symbols { get; private set; }
+        public char[] GetSymbols() { return (char[])_symbols.Clone(); }
 
         /// <summary>
-        /// Splits the specified input into a list of raw token values using whitespace and symbols.
+        /// Splits the specified input into a list of <see cref="RawToken"/> values using white space and symbols.
+        /// The tokens can be recombined to rebuild the original input exactly.
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns></returns>
@@ -52,15 +62,15 @@ namespace Soukoku.ExpressionParser
                     var ch = input[i];
                     if (char.IsWhiteSpace(ch))
                     {
-                        lastToken = NewTokenIfNecessary(tokens, lastToken, RawTokenType.Whitespace);
+                        lastToken = NewTokenIfNecessary(tokens, lastToken, RawTokenType.WhiteSpace, i);
                     }
-                    else if (Symbols.Contains(ch))
+                    else if (_symbols.Contains(ch))
                     {
-                        lastToken = NewTokenIfNecessary(tokens, lastToken, RawTokenType.Symbol);
+                        lastToken = NewTokenIfNecessary(tokens, lastToken, RawTokenType.Symbol, i);
                     }
                     else
                     {
-                        lastToken = NewTokenIfNecessary(tokens, lastToken, RawTokenType.Literal);
+                        lastToken = NewTokenIfNecessary(tokens, lastToken, RawTokenType.Literal, i);
                     }
                     lastToken.ValueBuilder.Append(ch);
                 }
@@ -68,11 +78,12 @@ namespace Soukoku.ExpressionParser
             return tokens;
         }
 
-        private RawToken NewTokenIfNecessary(List<RawToken> tokens, RawToken lastToken, RawTokenType curTokenType)
+        static RawToken NewTokenIfNecessary(List<RawToken> tokens, RawToken lastToken, RawTokenType curTokenType, int position)
         {
-            if (lastToken == null || lastToken.Type != curTokenType)
+            if (lastToken == null || lastToken.TokenType != curTokenType || 
+                curTokenType == RawTokenType.Symbol) // for symbol always let it be by itself
             {
-                lastToken = new RawToken(curTokenType);
+                lastToken = new RawToken(curTokenType, position);
                 tokens.Add(lastToken);
             }
             return lastToken;
@@ -80,13 +91,19 @@ namespace Soukoku.ExpressionParser
     }
 
     /// <summary>
-    /// A token split from the initial text input.
+    /// A low-level token split from the initial text input.
     /// </summary>
     public class RawToken
     {
-        internal RawToken(RawTokenType type)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RawToken"/> class.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="position">The position.</param>
+        internal RawToken(RawTokenType type, int position)
         {
-            Type = type;
+            TokenType = type;
+            Position = position;
             ValueBuilder = new StringBuilder();
         }
 
@@ -96,7 +113,17 @@ namespace Soukoku.ExpressionParser
         /// <value>
         /// The type.
         /// </value>
-        public RawTokenType Type { get; private set; }
+        public RawTokenType TokenType { get; private set; }
+
+        /// <summary>
+        /// Gets the starting position of this token in the original input.
+        /// </summary>
+        /// <value>
+        /// The position.
+        /// </value>
+        public int Position { get; private set; }
+
+        // TODO: test pef on using builder or using string directly
         internal StringBuilder ValueBuilder { get; private set; }
 
         /// <summary>
@@ -120,7 +147,7 @@ namespace Soukoku.ExpressionParser
     }
 
     /// <summary>
-    /// Indicates the raw token type.
+    /// Indicates the low-level token type.
     /// </summary>
     public enum RawTokenType
     {
@@ -129,15 +156,15 @@ namespace Soukoku.ExpressionParser
         /// </summary>
         None,
         /// <summary>
-        /// Token is whitespace.
+        /// Token is white space.
         /// </summary>
-        Whitespace,
+        WhiteSpace,
         /// <summary>
         /// Token is a symbol.
         /// </summary>
         Symbol,
         /// <summary>
-        /// Token is not symbol or whitespace.
+        /// Token is not symbol or white space.
         /// </summary>
         Literal,
     }
