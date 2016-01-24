@@ -144,7 +144,13 @@ namespace Soukoku.ExpressionParser
                 case OperatorType.LogicalNegation:
                     UnaryLogicOperation(a => !IsTrue(a));
                     break;
-                // TODO: assignments
+                case OperatorType.PreIncrement:
+                    UnaryNumberOperation(a => a + 1);
+                    break;
+                case OperatorType.PreDecrement:
+                    UnaryNumberOperation(a => a - 1);
+                    break;
+                // TODO: handle assignments & post increments
                 default:
                     throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "The {0} operation is not currently supported.", op));
             }

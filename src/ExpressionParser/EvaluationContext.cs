@@ -31,6 +31,11 @@ namespace Soukoku.ExpressionParser
         /// <summary>
         /// Initializes a new instance of the <see cref="EvaluationContext"/> class.
         /// </summary>
+        public EvaluationContext() { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EvaluationContext"/> class.
+        /// </summary>
         /// <param name="fieldLookupRoutine">The field value lookup routine.</param>
         public EvaluationContext(Func<string, object> fieldLookupRoutine)
         {

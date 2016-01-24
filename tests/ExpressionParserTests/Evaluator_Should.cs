@@ -122,6 +122,26 @@ namespace Soukoku.ExpressionParser
         }
 
         [TestMethod]
+        public void Handle_PreIncrement()
+        {
+            GivenInput("++100 + 5");
+            ExpectResult("106");
+
+            GivenInput("100 + ++5");
+            ExpectResult("106");
+        }
+
+        [TestMethod]
+        public void Handle_PreDecrement()
+        {
+            GivenInput("--100 + 5");
+            ExpectResult("104");
+
+            GivenInput("100 + --5");
+            ExpectResult("104");
+        }
+
+        [TestMethod]
         public void Support_Basic_Function()
         {
             GivenInput("pow(2,8)");
@@ -133,8 +153,8 @@ namespace Soukoku.ExpressionParser
         {
             var ctx = new EvaluationContext(null);
             ctx.RegisterFunction("always5", new FunctionRoutine(0, (c, p) => new ExpressionToken("5")));
-            GivenInput("always5()", ctx);
-            ExpectResult("5");
+            GivenInput("10 + always5()", ctx);
+            ExpectResult("15");
         }
 
 
