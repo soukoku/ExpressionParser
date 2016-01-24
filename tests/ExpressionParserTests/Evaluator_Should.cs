@@ -12,14 +12,14 @@ namespace Soukoku.ExpressionParser
         #region utility
 
         string _input;
-        decimal _result;
+        string _result;
         private void GivenInput(string input)
         {
             _input = input;
-            _result = new Evaluator(new EvaluationContext()).EvaluateInfix(input);
+            _result = new Evaluator(new EvaluationContext()).EvaluateInfix(input).Value;
         }
 
-        private void ExpectResult(decimal expected)
+        private void ExpectResult(string expected)
         {
             Assert.AreEqual(expected, _result);
         }
@@ -31,49 +31,70 @@ namespace Soukoku.ExpressionParser
         public void Return_0_When_Null()
         {
             GivenInput(null);
-            ExpectResult(0);
+            ExpectResult("0");
         }
 
         [TestMethod]
         public void Return_0_When_Empty()
         {
             GivenInput("");
-            ExpectResult(0);
+            ExpectResult("0");
         }
 
         [TestMethod]
         public void Return_Single_Value()
         {
             GivenInput("100");
-            ExpectResult(100);
+            ExpectResult("100");
         }
 
         [TestMethod]
         public void Handle_Simple_Operation()
         {
             GivenInput("100 + 100");
-            ExpectResult(200);
+            ExpectResult("200");
         }
 
         [TestMethod]
         public void Handle_Multi_Operation_With_Same_Precedence()
         {
             GivenInput("100 + 50 - 50");
-            ExpectResult(100);
+            ExpectResult("100");
         }
 
         [TestMethod]
         public void Handle_Multi_Operation_With_Different_Precedence()
         {
             GivenInput("100 + 2 * 10");
-            ExpectResult(120);
+            ExpectResult("120");
         }
 
         [TestMethod]
         public void Handle_Multi_Operation_With_Parenthesis()
         {
             GivenInput("(100 + 2) * 10");
-            ExpectResult(1020);
+            ExpectResult("1020");
+
+            GivenInput("100 * (2 + 10)");
+            ExpectResult("1200");
+        }
+
+
+        [TestMethod]
+        public void Use_1_OR_0_For_Logical_Result()
+        {
+            GivenInput("100 == 100");
+            ExpectResult("1");
+
+            GivenInput("100 != 100");
+            ExpectResult("0");
+        }
+
+        [TestMethod]
+        public void Support_Basic_Function()
+        {
+            GivenInput("pow(2,8)");
+            ExpectResult("256");
         }
     }
 }

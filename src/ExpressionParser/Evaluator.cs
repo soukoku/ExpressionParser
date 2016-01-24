@@ -32,7 +32,7 @@ namespace Soukoku.ExpressionParser
         /// <param name="input">The input.</param>
         /// <returns></returns>
         /// <exception cref="System.NotSupportedException"></exception>
-        public decimal EvaluateInfix(string input)
+        public ExpressionToken EvaluateInfix(string input)
         {
             var tokens = new InfixToPostfixTokenizer().Tokenize(input);
             var reader = new ListReader<ExpressionToken>(tokens);
@@ -51,10 +51,10 @@ namespace Soukoku.ExpressionParser
                         _stack.Push(tk);
                         break;
                     case ExpressionTokenType.Operator:
-                        HandleOperator(tk.OperatorType, reader);
+                        HandleOperator(tk.OperatorType);
                         break;
                     case ExpressionTokenType.Function:
-                        HandleFunction(tk.OperatorType, reader);
+                        HandleFunction(tk.Value);
                         break;
                 }
             }
@@ -65,12 +65,12 @@ namespace Soukoku.ExpressionParser
             }
             else if (_stack.Count == 1)
             {
-                return _context.ToDecimal(_stack.Pop());
+                return _stack.Pop();
             }
-            return 0;
+            return new ExpressionToken("0");
         }
 
-        private void HandleOperator(OperatorType op, ListReader<ExpressionToken> reader)
+        private void HandleOperator(OperatorType op)
         {
             switch (op)
             {
@@ -126,7 +126,7 @@ namespace Soukoku.ExpressionParser
             }
         }
 
-        private bool ToBool(string value)
+        static bool ToBool(string value)
         {
             return string.Equals("true", value) || value == "1";
         }
@@ -136,21 +136,29 @@ namespace Soukoku.ExpressionParser
             var op2 = _stack.Pop();
             var op1 = _stack.Pop();
 
-            var val = operation(op1.Value, op2.Value) ? "1" : "0";
+            var val = operation(op1.ToString(_context), op2.ToString(_context)) ? "1" : "0";
 
             _stack.Push(new ExpressionToken(val));
         }
         void DoBinaryOperation(Func<decimal, decimal, decimal> operation)
         {
-            var op2 = _context.ToDecimal(_stack.Pop());
-            var op1 = _context.ToDecimal(_stack.Pop());
+            var op2 = _stack.Pop().ToDecimal(_context);
+            var op1 = _stack.Pop().ToDecimal(_context);
 
             _stack.Push(new ExpressionToken(operation(op1, op2).ToString()));
         }
 
-        private void HandleFunction(OperatorType op, ListReader<ExpressionToken> reader)
+        private void HandleFunction(string functionName)
         {
-            throw new NotImplementedException();
+            var fun = _context.GetFunction(functionName);
+            var args = new Stack<ExpressionToken>(fun.ArgumentCount);
+
+            while (args.Count < fun.ArgumentCount)
+            {
+                args.Push(_stack.Pop());
+            }
+
+            _stack.Push(fun.Evaluate(_context, args.ToArray()));
         }
     }
 }

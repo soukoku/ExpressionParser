@@ -6,7 +6,7 @@ using System.Text;
 namespace Soukoku.ExpressionParser
 {
     /// <summary>
-    /// Contains supported operator info.
+    /// Contains recognized operator info.
     /// </summary>
     public static class KnownOperators
     {
@@ -44,7 +44,7 @@ namespace Soukoku.ExpressionParser
         };
 
         /// <summary>
-        /// Determines whether the specified operator value is supported.
+        /// Determines whether the specified operator value is recognized.
         /// </summary>
         /// <param name="operatorValue">The operator value.</param>
         /// <returns></returns>
@@ -144,7 +144,7 @@ namespace Soukoku.ExpressionParser
     }
 
     /// <summary>
-    /// Indicates the supported operator types.
+    /// Indicates the recognized operator types.
     /// </summary>
     public enum OperatorType
     {

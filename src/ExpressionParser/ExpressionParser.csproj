@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="EvaluationContext.cs" />
     <Compile Include="Evaluator.cs" />
+    <Compile Include="ExpressionTokenType.cs" />
     <Compile Include="IExpressionTokenizer.cs" />
     <Compile Include="KnownOperators.cs" />
     <Compile Include="ExpressionToken.cs" />

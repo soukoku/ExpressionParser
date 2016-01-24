@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Soukoku.ExpressionParser.Utilities;
+using System.Globalization;
 
 namespace Soukoku.ExpressionParser
 {
@@ -113,53 +114,69 @@ namespace Soukoku.ExpressionParser
             return Value;
         }
 
+
+        #region conversion routines
+
+        /// <summary>
+        /// Gets value as string with resolution.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <returns></returns>
+        public string ToString(EvaluationContext context)
+        {
+            switch (TokenType)
+            {
+                case ExpressionTokenType.Field:
+                    return context.GetFieldValue(Value).ToString();
+                default:
+                    return Value;
+            }
+        }
+
+        /// <summary>
+        /// Converts to the double value.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="System.NotSupportedException"></exception>
+        /// <exception cref="FormatException"></exception>
+        public double ToDouble(EvaluationContext context)
+        {
+            switch (TokenType)
+            {
+                case ExpressionTokenType.Value:
+                case ExpressionTokenType.SingleQuoted:
+                case ExpressionTokenType.DoubleQuoted:
+                    return double.Parse(Value);
+                case ExpressionTokenType.Field:
+                    return double.Parse(context.GetFieldValue(Value).ToString());
+                default:
+                    throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Cannot convert {0}({1}) to a numeric value.", TokenType, Value));
+            }
+        }
+
+        /// <summary>
+        /// Converts to the decimal value.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="System.NotSupportedException"></exception>
+        /// <exception cref="FormatException"></exception>
+        public decimal ToDecimal(EvaluationContext context)
+        {
+            switch (TokenType)
+            {
+                case ExpressionTokenType.Value:
+                case ExpressionTokenType.SingleQuoted:
+                case ExpressionTokenType.DoubleQuoted:
+                    return decimal.Parse(Value);
+                case ExpressionTokenType.Field:
+                    return decimal.Parse(context.GetFieldValue(Value).ToString());
+                default:
+                    throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Cannot convert {0}({1}) to a numeric value.", TokenType, Value));
+            }
+        }
+
+        #endregion
     }
 
-    /// <summary>
-    /// Indicates the expression token type.
-    /// </summary>
-    public enum ExpressionTokenType
-    {
-        /// <summary>
-        /// Invalid token type.
-        /// </summary>
-        None,
-        /// <summary>
-        /// The token is an operator.
-        /// </summary>
-        Operator,
-        /// <summary>
-        /// The token is an open parenthesis.
-        /// </summary>
-        OpenParenthesis,
-        /// <summary>
-        /// The token is a close parenthesis.
-        /// </summary>
-        CloseParenthesis,
-        /// <summary>
-        /// The token is a function.
-        /// </summary>
-        Function,
-        /// <summary>
-        /// The token is a comma.
-        /// </summary>
-        Comma,
-        /// <summary>
-        /// The token is a field reference.
-        /// </summary>
-        Field,
-        /// <summary>
-        /// The token is from single quoted value.
-        /// </summary>
-        SingleQuoted,
-        /// <summary>
-        /// The token is from double quoted value.
-        /// </summary>
-        DoubleQuoted,
-        /// <summary>
-        /// The token is a yet-to-be-parsed value.
-        /// </summary>
-        Value,
-    }
 
 }
