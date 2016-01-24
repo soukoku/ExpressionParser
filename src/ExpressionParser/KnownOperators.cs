@@ -10,39 +10,6 @@ namespace Soukoku.ExpressionParser
     /// </summary>
     public static class KnownOperators
     {
-        //static readonly string[] KnownList = new[]
-        //{
-        //    // double char
-        //    "++",
-        //    "--",
-        //    "+=",
-        //    "-=",
-        //    "*=",
-        //    "/=",
-        //    "%=",
-        //    "==",
-        //    "!=",
-        //    "<=",
-        //    ">=",
-        //    "&&",
-        //    "||",
-
-        //    // single char
-        //    "+",
-        //    "-",
-        //    "*",
-        //    "/",
-        //    "=",
-        //    "%", 
-        //    //"^",
-        //    "<",
-        //    ">", 
-        //    //"~",
-        //    "&",
-        //    "|",
-        //    "!",
-        //};
-
         static readonly Dictionary<string, OperatorType> DefaultMap = new Dictionary<string, OperatorType>
         {
             // double char
@@ -76,11 +43,21 @@ namespace Soukoku.ExpressionParser
             {"!", OperatorType.Negation },
         };
 
+        /// <summary>
+        /// Determines whether the specified operator value is supported.
+        /// </summary>
+        /// <param name="operatorValue">The operator value.</param>
+        /// <returns></returns>
         public static bool IsKnown(string operatorValue)
         {
             return DefaultMap.ContainsKey(operatorValue);
         }
 
+        /// <summary>
+        /// Try to get the enum version of the operator string value.
+        /// </summary>
+        /// <param name="operatorValue">The operator value.</param>
+        /// <returns></returns>
         public static OperatorType TryMap(string operatorValue)
         {
             if (DefaultMap.ContainsKey(operatorValue))
@@ -90,6 +67,11 @@ namespace Soukoku.ExpressionParser
             return OperatorType.None;
         }
 
+        /// <summary>
+        /// Gets the precedence of an operator.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
         public static int GetPrecedence(OperatorType type)
         {
             switch (type)
@@ -134,6 +116,12 @@ namespace Soukoku.ExpressionParser
             }
             return 0;
         }
+
+        /// <summary>
+        /// Determines whether the operator is left-to-right associative (true) or right-to-left (false).
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
         public static bool IsLeftAssociative(OperatorType type)
         {
             switch (type)
@@ -155,6 +143,9 @@ namespace Soukoku.ExpressionParser
         }
     }
 
+    /// <summary>
+    /// Indicates the supported operator types.
+    /// </summary>
     public enum OperatorType
     {
         /// <summary>
@@ -234,7 +225,7 @@ namespace Soukoku.ExpressionParser
         /// </summary>
         NotEqual,
         /// <summary>
-        /// & between values.
+        /// &amp; between values.
         /// </summary>
         BitwiseAnd,
         /// <summary>

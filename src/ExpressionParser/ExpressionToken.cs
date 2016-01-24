@@ -66,6 +66,15 @@ namespace Soukoku.ExpressionParser
             set { if (_value == null) { _type = value; } }
         }
 
+        /// <summary>
+        /// Gets or sets the type of the operator. This is only used if the <see cref="TokenType"/>
+        /// is <see cref="ExpressionTokenType.Operator"/>.
+        /// </summary>
+        /// <value>
+        /// The type of the operator.
+        /// </value>
+        public OperatorType OperatorType { get; set; }
+
         string _value;
         /// <summary>
         /// Gets the token value.
@@ -85,9 +94,6 @@ namespace Soukoku.ExpressionParser
         {
             return Value;
         }
-
-
-        public OperatorType OperatorType { get; set; }
         
     }
 
