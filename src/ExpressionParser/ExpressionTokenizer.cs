@@ -1,6 +1,7 @@
 ﻿using Soukoku.ExpressionParser.Util;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -11,20 +12,38 @@ namespace Soukoku.ExpressionParser
     /// </summary>
     public class ExpressionTokenizer
     {
-        static readonly ExpressionOperator[] KnownOperators = new[]
+        // TODO: add all common code operators
+
+        static readonly Dictionary<string, ExpressionOperator> KnownOperators = new Dictionary<string, ExpressionOperator>
         {
-            new ExpressionOperator{ Value= "+" },
-            new ExpressionOperator{ Value= "-" },
-            new ExpressionOperator{ Value= "*" },
-            new ExpressionOperator{ Value= "/" },
-            new ExpressionOperator{ Value= "=" },
-            new ExpressionOperator{ Value= "%" },
-            new ExpressionOperator{ Value= "^" },
-            new ExpressionOperator{ Value= "<" },
-            new ExpressionOperator{ Value= ">" },
-            new ExpressionOperator{ Value= "&" },
-            new ExpressionOperator{ Value= "|" },
-            new ExpressionOperator{ Value= "!" },
+            // double char
+            {"++", new ExpressionOperator{ Value= "++" } },
+            {"--", new ExpressionOperator{ Value= "++" } },
+            {"+=", new ExpressionOperator{ Value= "+=" } },
+            {"-=", new ExpressionOperator{ Value= "-=" } },
+            {"*=", new ExpressionOperator{ Value= "*=" } },
+            {"/=", new ExpressionOperator{ Value= "/=" } },
+            {"%=", new ExpressionOperator{ Value= "%=" } },
+            {"==", new ExpressionOperator{ Value= "==" } },
+            {"!=", new ExpressionOperator{ Value= "!=" } },
+            {"<=", new ExpressionOperator{ Value= "<=" } },
+            {">=", new ExpressionOperator{ Value= ">=" } },
+            {"&&", new ExpressionOperator{ Value= "&&" } },
+            {"||", new ExpressionOperator{ Value= "||" } },
+
+            // single char
+            {"+", new ExpressionOperator{ Value= "+" } },
+            {"-", new ExpressionOperator{ Value= "-" } },
+            {"*", new ExpressionOperator{ Value= "*" } },
+            {"/", new ExpressionOperator{ Value= "/" } },
+            {"=", new ExpressionOperator{ Value= "=" } },
+            {"%", new ExpressionOperator{ Value= "%" } },
+            {"^", new ExpressionOperator{ Value= "^" } },
+            {"<", new ExpressionOperator{ Value= "<" } },
+            {">", new ExpressionOperator{ Value= ">" } },
+            {"&", new ExpressionOperator{ Value= "&" } },
+            {"|", new ExpressionOperator{ Value= "|" } },
+            {"!", new ExpressionOperator{ Value= "!" } },
             //new ExpressionOperator{ Value= "[" },
             //new ExpressionOperator{ Value= "]" },
         };
@@ -36,64 +55,85 @@ namespace Soukoku.ExpressionParser
         /// <param name="input">The input.</param>
         /// <returns></returns>
         /// <exception cref="System.NotSupportedException"></exception>
-        public IList<ExpressionToken> Tokenize(string input)
+        public ExpressionToken[] Tokenize(string input)
         {
             var tokens = new List<ExpressionToken>();
+            ExpressionToken lastToken = null;
 
             var reader = new ListReader<RawToken>(new RawTokenizer().Tokenize(input));
 
-            if (!reader.IsEol)
+            while (!reader.IsEol)
             {
-                ExpressionToken lastToken = null;
-
-                do
+                var rawToken = reader.ReadNext();
+                switch (rawToken.TokenType)
                 {
-                    var rawToken = reader.ReadNext();
-                    switch (rawToken.TokenType)
-                    {
-                        case RawTokenType.WhiteSpace:
-                            // generially ends previous token outside other special scopes
-                            lastToken = null;
-                            break;
-                        case RawTokenType.Literal:
-                            if (lastToken == null || lastToken.TokenType != ExpressionTokenType.Value)
+                    case RawTokenType.WhiteSpace:
+                        // generially ends previous token outside other special scopes
+                        lastToken = null;
+                        break;
+                    case RawTokenType.Literal:
+                        if (lastToken == null || lastToken.TokenType != ExpressionTokenType.Value)
+                        {
+                            lastToken = new ExpressionToken { TokenType = ExpressionTokenType.Value };
+                            tokens.Add(lastToken);
+                        }
+                        lastToken.Value += rawToken.Value;
+                        break;
+                    case RawTokenType.Symbol:
+                        // first do operator match by checking the prev op
+                        // and see if combined with current token would still match a known operator
+                        if (KnownOperators.ContainsKey(rawToken.Value))
+                        {
+                            if (lastToken != null && lastToken.TokenType == ExpressionTokenType.Operator)
                             {
-                                lastToken = new ExpressionToken { TokenType = ExpressionTokenType.Value };
-                                tokens.Add(lastToken);
+                                var testOpValue = lastToken.Value + rawToken.Value;
+                                if (KnownOperators.ContainsKey(testOpValue))
+                                {
+                                    // just append it
+                                    lastToken.Value += rawToken.Value;
+                                    continue;
+                                }
                             }
+                            // start new one
+                            lastToken = new ExpressionToken { TokenType = ExpressionTokenType.Operator };
+                            tokens.Add(lastToken);
                             lastToken.Value += rawToken.Value;
-                            break;
-                        case RawTokenType.Symbol:
-                            if (lastToken == null || lastToken.TokenType != ExpressionTokenType.Operator)
-                            {
-                                lastToken = new ExpressionToken { TokenType = ExpressionTokenType.Operator };
-                                tokens.Add(lastToken);
-                            }
-                            lastToken.Value += rawToken.Value;
-                            break;
-                        default:
-                            throw new NotSupportedException(string.Format("Unsupported token type {0}.", rawToken.TokenType));
-                    }
+                        }
+                        else
+                        {
+                            // non-operator symbols
+
+                            //switch (rawToken.Value)
+                            //{
+                            //    case "(":
+                            //        break;
+                            //}
+                            //if(rt.Value[0])
+
+                        }
+                        break;
+                    default:
+                        // should never happen
+                        throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Unsupported token type {0} at position {1}.", rawToken.TokenType, rawToken.Position));
                 }
-                while (!reader.IsEol);
             }
 
-            RepurposeTokens(tokens);
+            //RepurposeTokens(tokens);
 
-            return tokens;
+            return tokens.ToArray();
         }
 
-        private void RepurposeTokens(List<ExpressionToken> tokens)
-        {
-            // change token type based on detected stuff
-            foreach (var tk in tokens)
-            {
-                if (tk.TokenType == ExpressionTokenType.Value)
-                {
+        //private void RepurposeTokens(List<ExpressionToken> tokens)
+        //{
+        //    // change token type based on detected stuff
+        //    foreach (var tk in tokens)
+        //    {
+        //        if (tk.TokenType == ExpressionTokenType.Value)
+        //        {
 
-                }
-            }
-        }
+        //        }
+        //    }
+        //}
     }
 
     /// <summary>
@@ -101,6 +141,12 @@ namespace Soukoku.ExpressionParser
     /// </summary>
     public class ExpressionOperator
     {
+        /// <summary>
+        /// Gets the operator value.
+        /// </summary>
+        /// <value>
+        /// The value.
+        /// </value>
         public string Value { get; set; }
     }
 
@@ -109,12 +155,28 @@ namespace Soukoku.ExpressionParser
     /// </summary>
     public class ExpressionToken
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExpressionToken"/> class.
+        /// </summary>
         public ExpressionToken()
         {
             Value = "";
         }
+
+        /// <summary>
+        /// Gets or sets the type of the token.
+        /// </summary>
+        /// <value>
+        /// The type of the token.
+        /// </value>
         public ExpressionTokenType TokenType { get; set; }
 
+        /// <summary>
+        /// Gets or sets the token value.
+        /// </summary>
+        /// <value>
+        /// The value.
+        /// </value>
         public string Value { get; set; }
 
     }
@@ -135,19 +197,19 @@ namespace Soukoku.ExpressionParser
         /// <summary>
         /// The token is an open parenthesis.
         /// </summary>
-        OpenParen,
+        OpenParenthesis,
         /// <summary>
         /// The token is a close parenthesis.
         /// </summary>
-        CloseParen,
-        /// <summary>
-        /// The token is a double quote.
-        /// </summary>
-        DoubleQuote,
-        /// <summary>
-        /// The token is a single quote.
-        /// </summary>
-        SingleQuote,
+        CloseParenthesis,
+        ///// <summary>
+        ///// The token is a double quote.
+        ///// </summary>
+        //DoubleQuote,
+        ///// <summary>
+        ///// The token is a single quote.
+        ///// </summary>
+        //SingleQuote,
         ///// <summary>
         ///// The token is a function.
         ///// </summary>

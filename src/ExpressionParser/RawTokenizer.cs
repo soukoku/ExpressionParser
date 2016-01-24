@@ -50,7 +50,7 @@ namespace Soukoku.ExpressionParser
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns></returns>
-        public IList<RawToken> Tokenize(string input)
+        public RawToken[] Tokenize(string input)
         {
             var tokens = new List<RawToken>();
 
@@ -75,7 +75,7 @@ namespace Soukoku.ExpressionParser
                     lastToken.ValueBuilder.Append(ch);
                 }
             }
-            return tokens;
+            return tokens.ToArray();
         }
 
         static RawToken NewTokenIfNecessary(List<RawToken> tokens, RawToken lastToken, RawTokenType curTokenType, int position)

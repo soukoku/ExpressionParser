@@ -8,7 +8,6 @@ namespace Soukoku.ExpressionParser.Util
     /// <summary>
     /// A simple reader for an IList. 
     /// </summary>
-    /// <typeparam name="TList">The type of the list.</typeparam>
     /// <typeparam name="TItem">The type of the item in the list.</typeparam>
     class ListReader<TItem>
     {
@@ -41,7 +40,7 @@ namespace Soukoku.ExpressionParser.Util
             {
                 if (value < 0 || value > _list.Count)
                 {
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException("value");
                 }
                 _position = value;
             }
@@ -56,12 +55,12 @@ namespace Soukoku.ExpressionParser.Util
         public bool IsEol { get { return _position >= _list.Count; } }
 
         /// <summary>
-        /// Reads the next item in the list and moves the <see cref="Position"/> forward.
+        /// Reads the next item in the list and moves the <see cref="Position" /> forward.
         /// </summary>
         /// <returns></returns>
+        /// <exception cref="System.ArgumentOutOfRangeException"></exception>
         public TItem ReadNext()
         {
-            if (IsEol) { return default(TItem); }
             return _list[Position++];
         }
 
@@ -69,14 +68,11 @@ namespace Soukoku.ExpressionParser.Util
         /// Peeks the next item in the list without moving the <see cref="Position"/>.
         /// </summary>
         /// <returns></returns>
+        /// <exception cref="System.ArgumentOutOfRangeException"></exception>
         public TItem Peek()
         {
-            var posn = Position + 1;
-
-            TItem peeked = posn >= _list.Count ?
-                default(TItem) : _list[posn];
-
-            return peeked;
+            // let list throw the exception.
+            return _list[Position + 1];
         }
     }
 }
