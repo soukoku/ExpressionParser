@@ -126,6 +126,14 @@ namespace Soukoku.ExpressionParser
         // TODO: test pef on using builder or using string directly
         internal StringBuilder ValueBuilder { get; private set; }
 
+        internal void Append(RawToken token)
+        {
+            if (token != null)
+            {
+                ValueBuilder.Append(token.ValueBuilder);
+            }
+        }
+
         /// <summary>
         /// Gets the token value.
         /// </summary>

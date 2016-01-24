@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Soukoku.ExpressionParser
 {
     [TestClass]
-    public class ExpressionTokenizer_Should
+    public class InfixExpressionTokenizer_Should
     {
         #region utility
 
@@ -15,7 +15,7 @@ namespace Soukoku.ExpressionParser
         private void GivenInput(string input)
         {
             _input = input;
-            _tokens = new ExpressionTokenizer().Tokenize(input);
+            _tokens = new InfixExpressionTokenizer().Tokenize(input);
         }
 
         private void ExpectValues(params string[] expectedTokens)
@@ -155,6 +155,13 @@ namespace Soukoku.ExpressionParser
             ExpectValues("Foo", "(", "123", ",", "bar", ")");
             ExpectTypes(ExpressionTokenType.Function, ExpressionTokenType.OpenParenthesis, ExpressionTokenType.Value,
                 ExpressionTokenType.Comma, ExpressionTokenType.Value, ExpressionTokenType.CloseParenthesis);
+        }
+        [TestMethod]
+        public void Read_Func_Name_With_Dot()
+        {
+            GivenInput("Foo.Bar(xyz)");
+            ExpectValues("Foo.Bar", "(", "xyz", ")");
+            ExpectTypes(ExpressionTokenType.Function, ExpressionTokenType.OpenParenthesis, ExpressionTokenType.Value, ExpressionTokenType.CloseParenthesis);
         }
 
     }

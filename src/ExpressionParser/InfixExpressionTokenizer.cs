@@ -10,7 +10,7 @@ namespace Soukoku.ExpressionParser
     /// <summary>
     /// A tokenizer that parses an input expression string into immediate tokens without white spaces.
     /// </summary>
-    public class ExpressionTokenizer
+    public class InfixExpressionTokenizer
     {
         // TODO: add all common code operators
 
@@ -19,11 +19,11 @@ namespace Soukoku.ExpressionParser
             // double char
             {"++", new ExpressionOperator{ Value= "++" } },
             {"--", new ExpressionOperator{ Value= "++" } },
-            //{"+=", new ExpressionOperator{ Value= "+=" } },
-            //{"-=", new ExpressionOperator{ Value= "-=" } },
-            //{"*=", new ExpressionOperator{ Value= "*=" } },
-            //{"/=", new ExpressionOperator{ Value= "/=" } },
-            //{"%=", new ExpressionOperator{ Value= "%=" } },
+            {"+=", new ExpressionOperator{ Value= "+=" } },
+            {"-=", new ExpressionOperator{ Value= "-=" } },
+            {"*=", new ExpressionOperator{ Value= "*=" } },
+            {"/=", new ExpressionOperator{ Value= "/=" } },
+            {"%=", new ExpressionOperator{ Value= "%=" } },
             {"==", new ExpressionOperator{ Value= "==" } },
             {"!=", new ExpressionOperator{ Value= "!=" } },
             {"<=", new ExpressionOperator{ Value= "<=" } },
@@ -210,38 +210,46 @@ namespace Soukoku.ExpressionParser
     /// </summary>
     public class ExpressionToken
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ExpressionToken"/> class.
-        /// </summary>
-        public ExpressionToken()
-        {
-            _rawTokens = new List<RawToken>();
-        }
-
-        IList<RawToken> _rawTokens; // the raw tokens that makes this token
+        RawToken _rawToken; // the raw token that makes this token
 
         /// <summary>
-        /// Gets the raw tokens that made this list.
+        /// Gets the raw token that made this list.
         /// </summary>
         /// <returns></returns>
-        public RawToken[] GetRawTokens() { return _rawTokens.ToArray(); }
+        public RawToken RawToken { get { return _rawToken; } }
+
+        const string FrozenErrorMsg = "Cannot modify frozen token.";
 
         /// <summary>
         /// Appends the specified token to this expression.
         /// </summary>
         /// <param name="token">The token.</param>
+        /// <exception cref="System.InvalidOperationException"></exception>
         public void Append(RawToken token)
         {
-            _rawTokens.Add(token);
+            if (IsFrozen) { throw new InvalidOperationException(FrozenErrorMsg); }
+
+            if (_rawToken == null) { _rawToken = token; }
+            else { _rawToken.Append(token); }
         }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is frozen.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is frozen; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsFrozen { get { return _value != null; } }
 
         /// <summary>
         /// Freezes this instance from being appended.
         /// </summary>
+        /// <exception cref="System.InvalidOperationException"></exception>
         public void Freeze()
         {
-            _rawTokens = _rawTokens.ToArray();
-            _value = string.Join("", _rawTokens);
+            if (IsFrozen) { throw new InvalidOperationException(FrozenErrorMsg); }
+            
+            _value = _rawToken.ToString();
         }
 
         private ExpressionTokenType _type;
@@ -264,7 +272,7 @@ namespace Soukoku.ExpressionParser
         /// <value>
         /// The value.
         /// </value>
-        public string Value { get { return _value ?? string.Join("", _rawTokens); } }
+        public string Value { get { return _value ?? _rawToken.ToString(); } }
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
