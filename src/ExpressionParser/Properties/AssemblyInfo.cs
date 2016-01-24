@@ -6,10 +6,10 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ExpressionParser")]
+[assembly: AssemblyTitle("Soukoku.ExpressionParser")]
 [assembly: AssemblyDescription("Can be used to parse and evaluate simple expressions.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyProduct("ExpressionParser")]
+[assembly: AssemblyProduct("Soukoku.ExpressionParser")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -1,5 +1,8 @@
 # ExpressionParser
-A simple lib in parsing and evaluating expressions.
+A simple lib in C# for parsing and evaluating expressions. To get it install with nuget:
+```
+Install-Package Soukoku.ExpressionParser
+```
 
 ## Supports
 This lib supports most common operators.
@@ -42,13 +45,16 @@ Console.WriteLine(result.ToString()); // should be "256"
 ```
 
 
-##Under the hood
+##How it works
 The evaluator does its work in stages:
 
 1. Parse input string into tokens
 2. Arrange tokens into Reverse Polish notation
 3. Perform the evaluation
 
+The logical operations will result in a number with 1 being true and 0 being false.
+
+##Custom functions
 The lib only comes with some built-in functions. It's possible to add
 your own by registering a custom routine.
 
