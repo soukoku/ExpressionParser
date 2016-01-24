@@ -5,6 +5,8 @@ using System.Text;
 
 namespace Soukoku.ExpressionParser.Utilities
 {
+    // this function could just be a stack but I'm keeping it for now.
+
     /// <summary>
     /// A simple reader for an IList. 
     /// </summary>

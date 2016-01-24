@@ -47,12 +47,12 @@ namespace Soukoku.ExpressionParser
                     case RawTokenType.Symbol:
                         // first do operator match by checking the prev op
                         // and see if combined with current token would still match a known operator
-                        if (ExpressionOperator.KnownOperators.ContainsKey(curRawToken.Value))
+                        if (KnownOperators.IsKnown(curRawToken.Value))
                         {
                             if (lastExpToken != null && lastExpToken.TokenType == ExpressionTokenType.Operator)
                             {
                                 var testOpValue = lastExpToken.Value + curRawToken.Value;
-                                if (ExpressionOperator.KnownOperators.ContainsKey(testOpValue))
+                                if (KnownOperators.IsKnown(testOpValue))
                                 {
                                     // just append it
                                     lastExpToken.Append(curRawToken);
@@ -142,12 +142,91 @@ namespace Soukoku.ExpressionParser
         static void MassageTokens(List<ExpressionToken> tokens)
         {
             // change token type based on detected stuff
-            foreach (var tk in tokens)
+            var reader = new ListReader<ExpressionToken>(tokens);
+            while (!reader.IsEnd)
             {
+                var tk = reader.Read();
                 tk.Freeze();
-                if (tk.TokenType == ExpressionTokenType.Value)
-                {
 
+                if (tk.TokenType == ExpressionTokenType.Operator)
+                {
+                    // special detection for operators depending on where it is :(
+                    switch (tk.Value)
+                    {
+                        // TODO: detect post ++ -- versions
+                        case "++":
+                            tk.OperatorType = OperatorType.PreDecrement;
+                            break;
+                        case "--":
+                            tk.OperatorType = OperatorType.PreDecrement;
+                            break;
+                        case "+=":
+                            tk.OperatorType = OperatorType.AdditionAssignment;
+                            break;
+                        case "-=":
+                            tk.OperatorType = OperatorType.SubtractionAssignment;
+                            break;
+                        case "*=":
+                            tk.OperatorType = OperatorType.MultiplicationAssignment;
+                            break;
+                        case "/=":
+                            tk.OperatorType = OperatorType.DivisionAssignment;
+                            break;
+                        case "%=":
+                            tk.OperatorType = OperatorType.ModulusAssignment;
+                            break;
+                        case "==":
+                            tk.OperatorType = OperatorType.Equal;
+                            break;
+                        case "!=":
+                            tk.OperatorType = OperatorType.NotEqual;
+                            break;
+                        case "<=":
+                            tk.OperatorType = OperatorType.LessThanOrEqual;
+                            break;
+                        case ">=":
+                            tk.OperatorType = OperatorType.GreaterThanOrEqual;
+                            break;
+                        case "&&":
+                            tk.OperatorType = OperatorType.LogicalAnd;
+                            break;
+                        case "||":
+                            tk.OperatorType = OperatorType.LogicalOr;
+                            break;
+
+                            // TODO: detect unary versions of + -
+                        case "+":
+                            tk.OperatorType = OperatorType.Addition;
+                            break;
+                        case "-":
+                            tk.OperatorType = OperatorType.Subtraction;
+                            break;
+                        case "*":
+                            tk.OperatorType = OperatorType.Multiplication;
+                            break;
+                        case "/":
+                            tk.OperatorType = OperatorType.Division;
+                            break;
+                        case "=":
+                            tk.OperatorType = OperatorType.Assignment;
+                            break;
+                        case "%":
+                            tk.OperatorType = OperatorType.Modulus;
+                            break;
+                        //case "^": tk.OperatorType = OperatorType.
+                        case "<":
+                            tk.OperatorType = OperatorType.LessThan;
+                            break;
+                        case ">":
+                            tk.OperatorType = OperatorType.GreaterThan;
+                            break;
+                        //case "~": tk.OperatorType = OperatorType.
+                        //case "&": tk.OperatorType = OperatorType.
+                        //case "|": tk.OperatorType = OperatorType.
+                        case "!":
+                            tk.OperatorType = OperatorType.Negation;
+                            break;
+                    }
                 }
             }
         }

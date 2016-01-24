@@ -48,7 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExpressionOperator.cs" />
+    <Compile Include="KnownOperators.cs" />
     <Compile Include="ExpressionToken.cs" />
     <Compile Include="InfixTokenizer.cs" />
     <Compile Include="InfixToPostfixTokenizer.cs" />

@@ -58,9 +58,13 @@ namespace Soukoku.ExpressionParser
                             var op2 = stack.Peek();
                             if (op2.TokenType == ExpressionTokenType.Operator)
                             {
-                                // TODO: handle associativity
-                                // TODO: determine correct precedence
-                                if (op1.OperatorPrecedence <= op2.OperatorPrecedence)
+                                var op1Prec = KnownOperators.GetPrecedence(op1.OperatorType);
+                                var op2Prec = KnownOperators.GetPrecedence(op2.OperatorType);
+                                var op1IsLeft = KnownOperators.IsLeftAssociative(op1.OperatorType);
+                                var op2IsLeft = KnownOperators.IsLeftAssociative(op2.OperatorType);
+
+                                if ((op1IsLeft && op1Prec <= op2Prec) ||
+                                    (!op1IsLeft && op1Prec < op2Prec))
                                 {
                                     output.Add(stack.Pop());
                                     continue;
@@ -68,13 +72,21 @@ namespace Soukoku.ExpressionParser
                             }
                             break;
                         }
-
                         stack.Push(op1);
                         break;
                     case ExpressionTokenType.OpenParenthesis:
                         stack.Push(inToken);
                         break;
                     case ExpressionTokenType.CloseParenthesis:
+                        while (stack.Count > 0)
+                        {
+                            var pop = stack.Pop();
+                            if (pop.TokenType == ExpressionTokenType.OpenParenthesis)
+                            {
+                                break;
+                            }
+                            output.Add(pop);
+                        }
                         break;
                 }
             }
@@ -82,7 +94,7 @@ namespace Soukoku.ExpressionParser
             while (stack.Count > 0)
             {
                 var op = stack.Pop();
-                if(op.TokenType== ExpressionTokenType.OpenParenthesis)
+                if (op.TokenType == ExpressionTokenType.OpenParenthesis)
                 {
                     // TODO: throw
                 }

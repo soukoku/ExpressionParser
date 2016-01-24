@@ -35,7 +35,7 @@ namespace Soukoku.ExpressionParser
         }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is frozen.
+        /// Gets a value indicating whether this instance is frozen from append.
         /// </summary>
         /// <value>
         ///   <c>true</c> if this instance is frozen; otherwise, <c>false</c>.
@@ -87,7 +87,7 @@ namespace Soukoku.ExpressionParser
         }
 
 
-        public int OperatorPrecedence { get; set; }
+        public OperatorType OperatorType { get; set; }
         
     }
 
