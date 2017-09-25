@@ -157,6 +157,46 @@ namespace Soukoku.ExpressionParser
             ExpectResult("15");
         }
 
+        [TestMethod]
+        public void Return_1_For_True_Literal()
+        {
+            GivenInput("true");
+            ExpectResult("1");
+        }
 
+        [TestMethod]
+        public void Return_0_For_Other_Literal()
+        {
+            GivenInput("whatev");
+            ExpectResult("0");
+        }
+
+        [TestMethod]
+        public void Return_1_For_True_Logical_And_Result()
+        {
+            GivenInput("true && true");
+            ExpectResult("1");
+        }
+
+        [TestMethod]
+        public void Return_0_For_False_Logical_And_Result()
+        {
+            GivenInput("true && false");
+            ExpectResult("0");
+        }
+
+        [TestMethod]
+        public void Return_1_For_True_Logical_Or_Result()
+        {
+            GivenInput("false || true");
+            ExpectResult("1");
+        }
+
+        [TestMethod]
+        public void Return_0_For_False_Logical_Or_Result()
+        {
+            GivenInput("false || asdf");
+            ExpectResult("0");
+        }
     }
 }

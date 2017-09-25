@@ -65,9 +65,27 @@ namespace Soukoku.ExpressionParser
             }
             else if (_stack.Count == 1)
             {
-                return _stack.Pop();
+                var res = _stack.Pop();
+                if (IsNumeric(res.Value))
+                {
+                    return res;
+                }
+                else if (IsTrue(res.Value))
+                {
+                    return new ExpressionToken("1");
+                }
+                //else if (IsFalse(res.Value))
+                //{
+                //    return new ExpressionToken("0");
+                //}
             }
             return new ExpressionToken("0");
+        }
+
+        static bool IsNumeric(string value)
+        {
+            decimal dummy;
+            return decimal.TryParse(value, NumberStyles.Integer | NumberStyles.AllowDecimalPoint, CultureInfo.CurrentCulture, out dummy);
         }
 
         private void HandleFunction(string functionName)
@@ -159,6 +177,11 @@ namespace Soukoku.ExpressionParser
         static bool IsTrue(string value)
         {
             return string.Equals("true", value, StringComparison.OrdinalIgnoreCase) || value == "1";
+        }
+
+        static bool IsFalse(string value)
+        {
+            return string.Equals("false", value, StringComparison.OrdinalIgnoreCase) || value == "0";
         }
 
         void UnaryNumberOperation(Func<decimal, decimal> operation)
