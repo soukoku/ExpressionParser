@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0;net40</TargetFrameworks>
-    <Version>1.2.0</Version>
+    <Version>1.3.0</Version>
     <PackageProjectUrl>https://github.com/soukoku/ExpressionParser</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/soukoku/ExpressionParser/master/LICENSE</PackageLicenseUrl>
     <Authors>Yin-Chun Wang</Authors>
@@ -14,6 +14,18 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Sign.snk</AssemblyOriginatorKeyFile>
     <Copyright>Copyright © Yin-Chun Wang 2016</Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netstandard1.0'">
+    <DocumentationFile>bin\Release\netstandard1.0\ExpressionParser.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net40'">
+    <DocumentationFile>bin\Release\net40\ExpressionParser.xml</DocumentationFile>
   </PropertyGroup>
 
 </Project>

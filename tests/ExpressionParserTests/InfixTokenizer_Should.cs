@@ -184,7 +184,15 @@ namespace Soukoku.ExpressionParser
             ExpectTypes(ExpressionTokenType.SingleQuoted);
         }
 
-        // TODO: test escaped quotes
+        // TODO: test more escaped quotes
+
+        [TestMethod]
+        public void Read_Escaped_Single_Quotes()
+        {
+            GivenInput("'A\\'s letter' ");
+            ExpectValues("A's letter");
+            ExpectTypes(ExpressionTokenType.SingleQuoted);
+        }
 
         [TestMethod]
         public void Read_Func_Without_Parameters()

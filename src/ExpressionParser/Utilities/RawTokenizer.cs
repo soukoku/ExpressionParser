@@ -72,7 +72,17 @@ namespace Soukoku.ExpressionParser.Utilities
                     {
                         lastToken = NewTokenIfNecessary(tokens, lastToken, RawTokenType.Literal, i);
                     }
-                    lastToken.ValueBuilder.Append(ch);
+
+                    if (ch == '\\' && ++i < input.Length)
+                    {
+                        // assume escape and just append next char as-is
+                        var next = input[i];
+                        lastToken.ValueBuilder.Append(next);
+                    }
+                    else
+                    {
+                        lastToken.ValueBuilder.Append(ch);
+                    }
                 }
             }
             return tokens.ToArray();
@@ -80,7 +90,7 @@ namespace Soukoku.ExpressionParser.Utilities
 
         static RawToken NewTokenIfNecessary(List<RawToken> tokens, RawToken lastToken, RawTokenType curTokenType, int position)
         {
-            if (lastToken == null || lastToken.TokenType != curTokenType || 
+            if (lastToken == null || lastToken.TokenType != curTokenType ||
                 curTokenType == RawTokenType.Symbol) // for symbol always let it be by itself
             {
                 lastToken = new RawToken(curTokenType, position);
