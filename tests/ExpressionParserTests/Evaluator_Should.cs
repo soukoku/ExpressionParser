@@ -198,5 +198,22 @@ namespace Soukoku.ExpressionParser
             GivenInput("false || asdf");
             ExpectResult("0");
         }
+
+
+
+        [TestMethod]
+        public void Return_0_For_Equaling_String_With_Empty_String()
+        {
+            GivenInput("howdy == ''");
+            ExpectResult("0");
+        }
+
+
+        [TestMethod]
+        public void Return_1_For_Equaling_String_With_Empty_String()
+        {
+            GivenInput("'' == ''");
+            ExpectResult("1");
+        }
     }
 }

@@ -68,7 +68,7 @@ namespace Soukoku.ExpressionParser
         {
             if (IsFrozen) { throw new InvalidOperationException(FrozenErrorMsg); }
 
-            _value = _rawToken.ToString();
+            _value = _rawToken?.ToString();
         }
 
         private ExpressionTokenType _type;
@@ -101,7 +101,7 @@ namespace Soukoku.ExpressionParser
         /// <value>
         /// The value.
         /// </value>
-        public string Value { get { return _value ?? _rawToken.ToString(); } }
+        public string Value { get { return _value ?? _rawToken?.ToString(); } }
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
