@@ -28,7 +28,7 @@ This lib supports most common operators.
 * basic functions (`pow`, `cos`, `sin`, `tan`)
 
 
-##Usage
+## Usage
 Create an instance of the `Evaluator` and call `EvalueateInfix`.
 Expressions can contain simple math or functions.
 The result can be retrieved with a `ToString()`. If an expression is not supported
@@ -37,15 +37,15 @@ you will get a **NotSupportedException**.
 ```csharp
 var context = new EvaluationContext();
 var evaluator = new Evaluator(context);
-var result = evaluator.EvaluateInfix("33 + 55");
+var result = evaluator.Evaluate("33 + 55");
 Console.WriteLine(result.ToString()); // should be "88"
 
-result = evaluator.EvaluateInfix("pow(2,8)");
+result = evaluator.Evaluate("pow(2,8)");
 Console.WriteLine(result.ToString()); // should be "256"
 ```
 
 
-##How it works
+## How it works
 The evaluator does its work in stages:
 
 1. Parse input string into tokens
@@ -67,6 +67,6 @@ var myFunc = new FunctionRoutine(0, (ctx, parameters) => new ExpressionToken("5"
 context.RegisterFunction("always5", myFunc);
 
 var evaluator = new Evaluator(context);
-var result = evaluator.EvaluateInfix("10 + always5()");
+var result = evaluator.Evaluate("10 + always5()");
 Console.WriteLine(result.ToString()); // should be "15"
 ```

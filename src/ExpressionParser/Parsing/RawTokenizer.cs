@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Soukoku.ExpressionParser.Utilities
+namespace Soukoku.ExpressionParser.Parsing
 {
     /// <summary>
     /// A low-level tokenizer that parses an input expression string into tokens.

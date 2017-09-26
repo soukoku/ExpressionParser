@@ -1,11 +1,10 @@
-﻿using Soukoku.ExpressionParser.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace Soukoku.ExpressionParser
+namespace Soukoku.ExpressionParser.Parsing
 {
     /// <summary>
     /// A tokenizer that parses an input expression string in infix notation into tokens without white spaces.

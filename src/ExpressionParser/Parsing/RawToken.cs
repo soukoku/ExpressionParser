@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Soukoku.ExpressionParser.Utilities
+namespace Soukoku.ExpressionParser.Parsing
 {
 
     /// <summary>

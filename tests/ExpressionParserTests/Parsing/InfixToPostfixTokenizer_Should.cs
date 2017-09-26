@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 
-namespace Soukoku.ExpressionParser
+namespace Soukoku.ExpressionParser.Parsing
 {
     [TestClass]
     public class InfixToPostfixTokenizer_Should

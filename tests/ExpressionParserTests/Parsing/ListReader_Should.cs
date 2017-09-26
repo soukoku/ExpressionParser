@@ -3,9 +3,8 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections;
 using System.Collections.Generic;
-using Soukoku.ExpressionParser.Utilities;
 
-namespace Soukoku.ExpressionParser
+namespace Soukoku.ExpressionParser.Parsing
 {
     [TestClass]
     public class ListReader_Should

@@ -1,4 +1,4 @@
-﻿namespace Soukoku.ExpressionParser
+﻿namespace Soukoku.ExpressionParser.Parsing
 {
     /// <summary>
     /// Interface for something that can tokenize an expression.

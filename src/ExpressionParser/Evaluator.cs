@@ -1,4 +1,4 @@
-﻿using Soukoku.ExpressionParser.Utilities;
+﻿using Soukoku.ExpressionParser.Parsing;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -26,12 +26,12 @@ namespace Soukoku.ExpressionParser
         }
 
         /// <summary>
-        /// Evaluates the specified input as an infix expression.
+        /// Evaluates the specified input expression.
         /// </summary>
-        /// <param name="input">The input.</param>
+        /// <param name="input">The input expression (infix).</param>
         /// <returns></returns>
         /// <exception cref="System.NotSupportedException"></exception>
-        public ExpressionToken EvaluateInfix(string input)
+        public ExpressionToken Evaluate(string input)
         {
             var tokens = new InfixToPostfixTokenizer().Tokenize(input);
             var reader = new ListReader<ExpressionToken>(tokens);
@@ -65,25 +65,20 @@ namespace Soukoku.ExpressionParser
             else if (_stack.Count == 1)
             {
                 var res = _stack.Pop();
-                if (IsNumeric(res.Value))
+                if (res.IsNumeric())
                 {
                     return res;
                 }
                 else if (IsTrue(res.Value))
                 {
-                    return new ExpressionToken("1");
+                    return ExpressionToken.True;
                 }
                 //else if (IsFalse(res.Value))
                 //{
                 //    return new ExpressionToken("0");
                 //}
             }
-            return new ExpressionToken("0");
-        }
-
-        static bool IsNumeric(string value)
-        {
-            return decimal.TryParse(value, NumberStyles.Integer | NumberStyles.AllowDecimalPoint, CultureInfo.CurrentCulture, out decimal dummy);
+            return ExpressionToken.False;
         }
 
         private void HandleFunction(string functionName)

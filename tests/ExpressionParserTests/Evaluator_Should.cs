@@ -18,7 +18,7 @@ namespace Soukoku.ExpressionParser
             if (context == null) { context = new EvaluationContext(null); }
 
             _input = input;
-            _result = new Evaluator(context).EvaluateInfix(input).Value;
+            _result = new Evaluator(context).Evaluate(input).Value;
         }
 
         private void ExpectResult(string expected)

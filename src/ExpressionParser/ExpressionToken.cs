@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Soukoku.ExpressionParser.Utilities;
 using System.Globalization;
+using Soukoku.ExpressionParser.Parsing;
 
 namespace Soukoku.ExpressionParser
 {
@@ -12,6 +12,16 @@ namespace Soukoku.ExpressionParser
     /// </summary>
     public class ExpressionToken
     {
+        /// <summary>
+        /// Canonical true value.
+        /// </summary>
+        public static readonly ExpressionToken True = new ExpressionToken("1");
+        /// <summary>
+        /// Canonical false value.
+        /// </summary>
+        public static readonly ExpressionToken False = new ExpressionToken("0");
+
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionToken"/> class.
         /// </summary>
@@ -116,6 +126,33 @@ namespace Soukoku.ExpressionParser
 
 
         #region conversion routines
+
+        /// <summary>
+        /// Check if the value is considered numeric.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsNumeric()
+        {
+            return decimal.TryParse(Value, NumberStyles.Integer | NumberStyles.AllowDecimalPoint, CultureInfo.CurrentCulture, out decimal dummy);
+        }
+
+        /// <summary>
+        /// Check if the value is considered true.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsTrue(string value)
+        {
+            return string.Equals("true", Value, StringComparison.OrdinalIgnoreCase) || value == "1";
+        }
+
+        /// <summary>
+        /// Check if the value is considered false.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsFalse(string value)
+        {
+            return string.Equals("false", Value, StringComparison.OrdinalIgnoreCase) || value == "0";
+        }
 
         /// <summary>
         /// Gets value as string with resolution.

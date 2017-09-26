@@ -50,6 +50,16 @@ namespace Soukoku.ExpressionParser
         public object GetFieldValue(string field)
         {
             if (_fieldLookup != null) { return _fieldLookup(field); }
+            return OnGetFieldValue(field);
+        }
+
+        /// <summary>
+        /// Gets the field value.
+        /// </summary>
+        /// <param name="field">The field.</param>
+        /// <returns></returns>
+        protected virtual object OnGetFieldValue(string field)
+        {
             return null;
         }
 
@@ -93,7 +103,20 @@ namespace Soukoku.ExpressionParser
             {
                 return BuiltInFunctions[functionName];
             }
-            throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Function \"{0}\" is not supported.", functionName));
+            return OnGetFunction(functionName) ??
+                throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Function \"{0}\" is not supported.", functionName));
+        }
+
+
+        /// <summary>
+        /// Gets the function registered with this context.
+        /// </summary>
+        /// <param name="functionName">Name of the function.</param>
+        /// <returns></returns>
+        /// <exception cref="System.NotSupportedException"></exception>
+        protected virtual FunctionRoutine OnGetFunction(string functionName)
+        {
+            return null;
         }
     }
 
