@@ -22,8 +22,7 @@ namespace Soukoku.ExpressionParser
         /// <exception cref="System.ArgumentNullException">context</exception>
         public Evaluator(EvaluationContext context)
         {
-            if (context == null) { throw new ArgumentNullException("context"); }
-            _context = context;
+            _context = context ?? throw new ArgumentNullException("context");
         }
 
         /// <summary>
@@ -84,8 +83,7 @@ namespace Soukoku.ExpressionParser
 
         static bool IsNumeric(string value)
         {
-            decimal dummy;
-            return decimal.TryParse(value, NumberStyles.Integer | NumberStyles.AllowDecimalPoint, CultureInfo.CurrentCulture, out dummy);
+            return decimal.TryParse(value, NumberStyles.Integer | NumberStyles.AllowDecimalPoint, CultureInfo.CurrentCulture, out decimal dummy);
         }
 
         private void HandleFunction(string functionName)

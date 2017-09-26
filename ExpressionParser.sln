@@ -1,13 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionParser", "src\ExpressionParser\ExpressionParser.csproj", "{8436F2D1-4C00-44C9-9181-88E3D528B03C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5ABE3578-C267-4ED6-914D-DE79CB0DCED6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionParserTests", "tests\ExpressionParserTests\ExpressionParserTests.csproj", "{9F9C952F-71F3-414D-8F31-E24FFA46C34D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E3B12293-EE70-41B1-9733-F31108430FB9}"
 EndProject
@@ -17,26 +13,33 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{2F52BA
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpressionParser", "src\ExpressionParser\ExpressionParser.csproj", "{29ED8E66-FFD0-494E-82D0-9D1FC57BFF1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionParserTests", "tests\ExpressionParserTests\ExpressionParserTests.csproj", "{2E9159A9-F19B-4CB3-B775-8A775064D0A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8436F2D1-4C00-44C9-9181-88E3D528B03C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8436F2D1-4C00-44C9-9181-88E3D528B03C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8436F2D1-4C00-44C9-9181-88E3D528B03C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8436F2D1-4C00-44C9-9181-88E3D528B03C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9F9C952F-71F3-414D-8F31-E24FFA46C34D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9F9C952F-71F3-414D-8F31-E24FFA46C34D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9F9C952F-71F3-414D-8F31-E24FFA46C34D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9F9C952F-71F3-414D-8F31-E24FFA46C34D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29ED8E66-FFD0-494E-82D0-9D1FC57BFF1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29ED8E66-FFD0-494E-82D0-9D1FC57BFF1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29ED8E66-FFD0-494E-82D0-9D1FC57BFF1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29ED8E66-FFD0-494E-82D0-9D1FC57BFF1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E9159A9-F19B-4CB3-B775-8A775064D0A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E9159A9-F19B-4CB3-B775-8A775064D0A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E9159A9-F19B-4CB3-B775-8A775064D0A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E9159A9-F19B-4CB3-B775-8A775064D0A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{8436F2D1-4C00-44C9-9181-88E3D528B03C} = {E3B12293-EE70-41B1-9733-F31108430FB9}
-		{9F9C952F-71F3-414D-8F31-E24FFA46C34D} = {5ABE3578-C267-4ED6-914D-DE79CB0DCED6}
+		{29ED8E66-FFD0-494E-82D0-9D1FC57BFF1F} = {E3B12293-EE70-41B1-9733-F31108430FB9}
+		{2E9159A9-F19B-4CB3-B775-8A775064D0A0} = {5ABE3578-C267-4ED6-914D-DE79CB0DCED6}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DB8E9053-08E6-4801-B98C-6CBE16441427}
 	EndGlobalSection
 EndGlobal

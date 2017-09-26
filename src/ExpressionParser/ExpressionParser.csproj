@@ -1,82 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8436F2D1-4C00-44C9-9181-88E3D528B03C}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Soukoku.ExpressionParser</RootNamespace>
-    <AssemblyName>Soukoku.ExpressionParser</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\Soukoku.ExpressionParser.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup>
+    <TargetFrameworks>netstandard1.0;net40</TargetFrameworks>
+    <Version>1.2.0</Version>
+    <PackageProjectUrl>https://github.com/soukoku/ExpressionParser</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/soukoku/ExpressionParser/master/LICENSE</PackageLicenseUrl>
+    <Authors>Yin-Chun Wang</Authors>
+    <Company>Yin-Chun Wang</Company>
+    <PackageId>Soukoku.ExpressionParser</PackageId>
+    <Product>Soukoku.ExpressionParser</Product>
+    <Description>Can be used to parse and evaluate simple expressions.</Description>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
     <AssemblyOriginatorKeyFile>Sign.snk</AssemblyOriginatorKeyFile>
+    <Copyright>Copyright © Yin-Chun Wang 2016</Copyright>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="EvaluationContext.cs" />
-    <Compile Include="Evaluator.cs" />
-    <Compile Include="ExpressionTokenType.cs" />
-    <Compile Include="FunctionRoutine.cs" />
-    <Compile Include="IExpressionTokenizer.cs" />
-    <Compile Include="KnownOperators.cs" />
-    <Compile Include="ExpressionToken.cs" />
-    <Compile Include="InfixTokenizer.cs" />
-    <Compile Include="InfixToPostfixTokenizer.cs" />
-    <Compile Include="OperatorType.cs" />
-    <Compile Include="Utilities\ListReader.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\VersionInfo.cs" />
-    <Compile Include="Utilities\RawToken.cs" />
-    <Compile Include="Utilities\RawTokenizer.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <CodeAnalysisDictionary Include="CustomDictionary.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ExpressionParser.nuspec" />
-    <None Include="Sign.snk" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
