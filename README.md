@@ -54,7 +54,7 @@ The evaluator does its work in stages:
 
 The logical operations will result in a number with 1 being true and 0 being false.
 
-##Custom functions
+## Custom functions
 The lib only comes with some built-in functions. It's possible to add
 your own by registering a custom routine.
 
