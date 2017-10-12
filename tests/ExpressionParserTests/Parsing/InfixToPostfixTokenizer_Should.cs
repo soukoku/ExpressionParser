@@ -139,5 +139,19 @@ namespace Soukoku.ExpressionParser.Parsing
             ExpectTypes(ExpressionTokenType.Value, ExpressionTokenType.Function);
         }
 
+        [TestMethod]
+        public void Read_Func_Without_Parameters_In_Expression()
+        {
+            GivenInput("Foo() == 1");
+            ExpectValues("Foo", "1", "==");
+            ExpectTypes(ExpressionTokenType.Function, ExpressionTokenType.Value, ExpressionTokenType.Operator);
+        }
+        [TestMethod]
+        public void Read_Func_With_One_Parameter_In_Expression()
+        {
+            GivenInput("Foo(123) == 1");
+            ExpectValues("123", "Foo", "1", "==");
+            ExpectTypes(ExpressionTokenType.Value, ExpressionTokenType.Function, ExpressionTokenType.Value, ExpressionTokenType.Operator);
+        }
     }
 }

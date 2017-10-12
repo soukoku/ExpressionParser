@@ -149,11 +149,20 @@ namespace Soukoku.ExpressionParser
         }
 
         [TestMethod]
-        public void Support_Custom_Function()
+        public void Support_Custom_Function_With_BuiltIn_Operator()
         {
             var ctx = new EvaluationContext(null);
             ctx.RegisterFunction("always5", new FunctionRoutine(0, (c, p) => new ExpressionToken("5")));
             GivenInput("10 + always5()", ctx);
+            ExpectResult("15");
+        }
+
+        [TestMethod]
+        public void Support_Custom_Function_With_BuiltIn_Operator_Switch_Order()
+        {
+            var ctx = new EvaluationContext(null);
+            ctx.RegisterFunction("always5", new FunctionRoutine(0, (c, p) => new ExpressionToken("5")));
+            GivenInput("always5() + 10", ctx);
             ExpectResult("15");
         }
 

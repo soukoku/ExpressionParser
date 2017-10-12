@@ -135,6 +135,14 @@ namespace Soukoku.ExpressionParser.Parsing
             {
                 throw new NotSupportedException(UnbalancedParenMsg);
             }
+            else if (_stack.Count > 0)
+            {
+                var next = _stack.Peek();
+                if (next != null && next.TokenType == ExpressionTokenType.Function)
+                {
+                    _output.Add(_stack.Pop());
+                }
+            }
         }
     }
 }
