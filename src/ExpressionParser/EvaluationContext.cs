@@ -49,7 +49,7 @@ namespace Soukoku.ExpressionParser
         /// <returns></returns>
         public object GetFieldValue(string field)
         {
-            if (_fieldLookup != null) { return _fieldLookup(field); }
+            if (_fieldLookup != null) { return _fieldLookup(field) ?? string.Empty; }
             return OnGetFieldValue(field);
         }
 
@@ -60,7 +60,7 @@ namespace Soukoku.ExpressionParser
         /// <returns></returns>
         protected virtual object OnGetFieldValue(string field)
         {
-            return null;
+            return string.Empty;
         }
 
         /// <summary>

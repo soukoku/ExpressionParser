@@ -129,10 +129,10 @@ namespace Soukoku.ExpressionParser
                     BinaryNumberOperation((a, b) => a >= b ? 1 : 0);
                     break;
                 case OperatorType.Equal:
-                    BinaryLogicOperation((a, b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase));
+                    BinaryLogicOperation((a, b) => string.Equals(a ?? string.Empty, b ?? string.Empty, StringComparison.OrdinalIgnoreCase));
                     break;
                 case OperatorType.NotEqual:
-                    BinaryLogicOperation((a, b) => !string.Equals(a, b, StringComparison.OrdinalIgnoreCase));
+                    BinaryLogicOperation((a, b) => !string.Equals(a ?? string.Empty, b ?? string.Empty, StringComparison.OrdinalIgnoreCase));
                     break;
                 case OperatorType.BitwiseAnd:
                     BinaryNumberOperation((a, b) => (int)a & (int)b);

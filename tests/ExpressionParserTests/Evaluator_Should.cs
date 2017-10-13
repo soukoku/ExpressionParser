@@ -224,5 +224,26 @@ namespace Soukoku.ExpressionParser
             GivenInput("'' == ''");
             ExpectResult("1");
         }
+
+        [TestMethod]
+        public void Return_0_For_NotEqualing_String_With_Empty_String()
+        {
+            GivenInput("'' != ''");
+            ExpectResult("0");
+        }
+
+        [TestMethod]
+        public void Return_1_For_Equaling_NullField_With_Empty_String()
+        {
+            GivenInput("{sample} == ''", new EvaluationContext(field => null));
+            ExpectResult("1");
+        }
+
+        [TestMethod]
+        public void Return_0_For_NotEqualing_NullField_With_Empty_String()
+        {
+            GivenInput("{sample} != ''", new EvaluationContext(field=> null));
+            ExpectResult("0");
+        }
     }
 }
