@@ -13,12 +13,12 @@ namespace Soukoku.ExpressionParser
 
         string _input;
         string _result;
-        private void GivenInput(string input, EvaluationContext context = null)
+        private void GivenInput(string input, EvaluationContext context = null, bool coerse = false)
         {
             if (context == null) { context = new EvaluationContext(null); }
 
             _input = input;
-            _result = new Evaluator(context).Evaluate(input).Value;
+            _result = new Evaluator(context).Evaluate(input, coerse).Value;
         }
 
         private void ExpectResult(string expected)
@@ -30,17 +30,17 @@ namespace Soukoku.ExpressionParser
 
 
         [TestMethod]
-        public void Return_0_When_Null()
+        public void Return_Null_When_Null()
         {
             GivenInput(null);
-            ExpectResult("0");
+            ExpectResult(null);
         }
 
         [TestMethod]
-        public void Return_0_When_Empty()
+        public void Return_Empty_When_Empty()
         {
             GivenInput("");
-            ExpectResult("0");
+            ExpectResult("");
         }
 
         [TestMethod]
@@ -167,17 +167,61 @@ namespace Soukoku.ExpressionParser
         }
 
         [TestMethod]
-        public void Return_1_For_True_Literal()
+        public void Return_1_For_True_Literal_If_Coersing()
         {
-            GivenInput("true");
+            GivenInput("true", coerse: true);
+            ExpectResult("1");
+
+            GivenInput("1", coerse: true);
             ExpectResult("1");
         }
 
         [TestMethod]
-        public void Return_0_For_Other_Literal()
+        public void Return_1_For_Non_False_Literal_If_Coersing()
         {
-            GivenInput("whatev");
+            GivenInput("whatev", coerse: true);
+            ExpectResult("1");
+        }
+
+        [TestMethod]
+        public void Return_0_For_False_Literal_If_Coersing()
+        {
+            GivenInput("false", coerse: true);
             ExpectResult("0");
+
+            GivenInput("0", coerse: true);
+            ExpectResult("0");
+
+            GivenInput("", coerse: true);
+            ExpectResult("0");
+
+            GivenInput(null, coerse: true);
+            ExpectResult("0");
+        }
+
+        [TestMethod]
+        public void Return_As_Is_If_Not_Coersing()
+        {
+            GivenInput("true", coerse: false);
+            ExpectResult("true");
+
+            GivenInput("1", coerse: false);
+            ExpectResult("1");
+
+            GivenInput("whatev", coerse: false);
+            ExpectResult("whatev");
+
+            GivenInput("false", coerse: false);
+            ExpectResult("false");
+
+            GivenInput("0", coerse: false);
+            ExpectResult("0");
+
+            GivenInput("", coerse: false);
+            ExpectResult("");
+
+            GivenInput(null, coerse: false);
+            ExpectResult(null);
         }
 
         [TestMethod]
@@ -242,7 +286,7 @@ namespace Soukoku.ExpressionParser
         [TestMethod]
         public void Return_0_For_NotEqualing_NullField_With_Empty_String()
         {
-            GivenInput("{sample} != ''", new EvaluationContext(field=> null));
+            GivenInput("{sample} != ''", new EvaluationContext(field => null));
             ExpectResult("0");
         }
     }

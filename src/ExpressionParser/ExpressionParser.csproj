@@ -2,14 +2,14 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0;net40</TargetFrameworks>
-    <Version>2.0.2</Version>
+    <Version>2.1.0</Version>
     <PackageProjectUrl>https://github.com/soukoku/ExpressionParser</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/soukoku/ExpressionParser/master/LICENSE</PackageLicenseUrl>
     <Authors>Yin-Chun Wang</Authors>
     <Company>Yin-Chun Wang</Company>
     <PackageId>Soukoku.ExpressionParser</PackageId>
     <Product>Soukoku.ExpressionParser</Product>
-    <Description>Can be used to parse and evaluate simple expressions.</Description>
+    <Description>Can be used to parse and evaluate simple calculation or boolean expressions.</Description>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Sign.snk</AssemblyOriginatorKeyFile>

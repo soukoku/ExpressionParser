@@ -13,11 +13,11 @@ namespace Soukoku.ExpressionParser
     public class ExpressionToken
     {
         /// <summary>
-        /// Canonical true value.
+        /// Canonical true value. Actual value is numerical "1".
         /// </summary>
         public static readonly ExpressionToken True = new ExpressionToken("1");
         /// <summary>
-        /// Canonical false value.
+        /// Canonical false value. Actual value is numerical "0".
         /// </summary>
         public static readonly ExpressionToken False = new ExpressionToken("0");
 

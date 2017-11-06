@@ -29,10 +29,18 @@ namespace Soukoku.ExpressionParser
         /// Evaluates the specified input expression.
         /// </summary>
         /// <param name="input">The input expression (infix).</param>
+        /// <param name="coerseToBoolean">if set to <c>true</c> then the result will be coersed to boolean true/false if possible.
+        /// Anything not "false", "0", or "" is considered true.</param>
         /// <returns></returns>
+        /// <exception cref="NotSupportedException">Unbalanced expression.</exception>
         /// <exception cref="System.NotSupportedException"></exception>
-        public ExpressionToken Evaluate(string input)
+        public ExpressionToken Evaluate(string input, bool coerseToBoolean = false)
         {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return coerseToBoolean ? ExpressionToken.False : new ExpressionToken(input);
+            }
+
             var tokens = new InfixToPostfixTokenizer().Tokenize(input);
             var reader = new ListReader<ExpressionToken>(tokens);
 
@@ -57,28 +65,30 @@ namespace Soukoku.ExpressionParser
                         break;
                 }
             }
-
-            if (_stack.Count > 1)
-            {
-                throw new NotSupportedException("Unbalanced expression.");
-            }
-            else if (_stack.Count == 1)
+            
+            if (_stack.Count == 1)
             {
                 var res = _stack.Pop();
-                if (res.IsNumeric())
+                if (coerseToBoolean)
                 {
-                    return res;
-                }
-                else if (IsTrue(res.Value))
-                {
+                    if (IsFalse(res.Value))
+                    {
+                        return ExpressionToken.False;
+                    }
                     return ExpressionToken.True;
                 }
-                //else if (IsFalse(res.Value))
+                return res;
+
+                //if (res.IsNumeric())
                 //{
-                //    return new ExpressionToken("0");
+                //    return res;
+                //}
+                //else if (IsTrue(res.Value))
+                //{
+                //    return ExpressionToken.True;
                 //}
             }
-            return ExpressionToken.False;
+            throw new NotSupportedException("Unbalanced expression.");
         }
 
         private void HandleFunction(string functionName)
@@ -174,7 +184,7 @@ namespace Soukoku.ExpressionParser
 
         static bool IsFalse(string value)
         {
-            return string.Equals("false", value, StringComparison.OrdinalIgnoreCase) || value == "0";
+            return string.Equals("false", value, StringComparison.OrdinalIgnoreCase) || value == "0" || string.IsNullOrWhiteSpace(value);
         }
 
         void UnaryNumberOperation(Func<decimal, decimal> operation)
