@@ -140,6 +140,35 @@ namespace Soukoku.ExpressionParser
             }
             return false;
         }
+        static bool IsBoolean(string lhs, string rhs, out bool lhsBool, out bool rhsBool)
+        {
+            lhsBool = false;
+            rhsBool = false;
+
+            if (string.Equals(lhs, "true", StringComparison.Ordinal))
+            {
+                lhsBool = true;
+                rhsBool = IsTrue(rhs);
+                return true;
+            }
+            else if (string.Equals(lhs, "false", StringComparison.Ordinal))
+            {
+                rhsBool = IsTrue(rhs);
+                return true;
+            }
+            else if (string.Equals(rhs, "true", StringComparison.Ordinal))
+            {
+                rhsBool = true;
+                lhsBool = IsTrue(lhs);
+                return true;
+            }
+            else if (string.Equals(rhs, "false", StringComparison.Ordinal))
+            {
+                lhsBool = IsTrue(lhs);
+                return true;
+            }
+            return false;
+        }
 
         private void HandleOperator(OperatorType op)
         {
@@ -237,6 +266,10 @@ namespace Soukoku.ExpressionParser
                     {
                         _stack.Push(lhsDate == rhsDate ? ExpressionToken.True : ExpressionToken.False);
                     }
+                    else if (IsBoolean(lhs, rhs, out bool lhsBool, out bool rhsBool))
+                    {
+                        _stack.Push(lhsBool == rhsBool ? ExpressionToken.True : ExpressionToken.False);
+                    }
                     else if (IsNumber(lhs, rhs, out decimal lhsNum, out decimal rhsNum))
                     {
                         _stack.Push(lhsNum == rhsNum ? ExpressionToken.True : ExpressionToken.False);
@@ -253,6 +286,10 @@ namespace Soukoku.ExpressionParser
                     if (IsDate(lhs, rhs, out lhsDate, out rhsDate))
                     {
                         _stack.Push(lhsDate != rhsDate ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else if (IsBoolean(lhs, rhs, out bool lhsBool, out bool rhsBool))
+                    {
+                        _stack.Push(lhsBool != rhsBool ? ExpressionToken.True : ExpressionToken.False);
                     }
                     else if (IsNumber(lhs, rhs, out decimal lhsNum, out decimal rhsNum))
                     {

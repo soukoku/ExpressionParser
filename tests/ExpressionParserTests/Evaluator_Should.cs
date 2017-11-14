@@ -290,6 +290,58 @@ namespace Soukoku.ExpressionParser
             ExpectResult("0");
         }
 
+
+        // implicit boolean
+
+        [TestMethod]
+        public void One_And_Zero_Are_Implicit_True_And_False_For_Equals_Op()
+        {
+            GivenInput("1 == true", new EvaluationContext(field => null));
+            ExpectResult("1", "1st");
+            GivenInput("true == 1", new EvaluationContext(field => null));
+            ExpectResult("1", "2nd");
+            GivenInput("0 == true", new EvaluationContext(field => null));
+            ExpectResult("0", "3rd");
+            GivenInput("true == 0", new EvaluationContext(field => null));
+            ExpectResult("0", "4th");
+
+
+            GivenInput("1 == false", new EvaluationContext(field => null));
+            ExpectResult("0", "5th");
+            GivenInput("false == 1", new EvaluationContext(field => null));
+            ExpectResult("0", "6th");
+            GivenInput("0 == false", new EvaluationContext(field => null));
+            ExpectResult("1", "7th");
+            GivenInput("false == 0", new EvaluationContext(field => null));
+            ExpectResult("1", "8th");
+        }
+
+        [TestMethod]
+        public void One_And_Zero_Are_Implicit_True_And_False_For_NotEquals_Op()
+        {
+            GivenInput("1 != true", new EvaluationContext(field => null));
+            ExpectResult("0", "1st");
+            GivenInput("true != 1", new EvaluationContext(field => null));
+            ExpectResult("0", "2nd");
+            GivenInput("0 != true", new EvaluationContext(field => null));
+            ExpectResult("1", "3rd");
+            GivenInput("true != 0", new EvaluationContext(field => null));
+            ExpectResult("1", "4th");
+
+
+            GivenInput("1 != false", new EvaluationContext(field => null));
+            ExpectResult("1", "5th");
+            GivenInput("false != 1", new EvaluationContext(field => null));
+            ExpectResult("1", "6th");
+            GivenInput("0 != false", new EvaluationContext(field => null));
+            ExpectResult("0", "7th");
+            GivenInput("false != 0", new EvaluationContext(field => null));
+            ExpectResult("0", "8th");
+        }
+
+
+
+
         // date comparison
 
         [TestMethod]
