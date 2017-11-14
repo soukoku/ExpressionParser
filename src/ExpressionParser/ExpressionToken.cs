@@ -21,6 +21,7 @@ namespace Soukoku.ExpressionParser
         /// </summary>
         public static readonly ExpressionToken False = new ExpressionToken("0");
 
+        internal static readonly NumberStyles NumberParseStyle = NumberStyles.Integer | NumberStyles.AllowDecimalPoint | NumberStyles.AllowCurrencySymbol | NumberStyles.Number;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionToken"/> class.
@@ -133,7 +134,7 @@ namespace Soukoku.ExpressionParser
         /// <returns></returns>
         public bool IsNumeric()
         {
-            return decimal.TryParse(Value, NumberStyles.Integer | NumberStyles.AllowDecimalPoint, CultureInfo.CurrentCulture, out decimal dummy);
+            return decimal.TryParse(Value, NumberParseStyle, CultureInfo.CurrentCulture, out decimal dummy);
         }
 
         /// <summary>
@@ -165,9 +166,9 @@ namespace Soukoku.ExpressionParser
             {
                 case ExpressionTokenType.Field:
                     if (context == null) { throw new ArgumentNullException("context"); }
-                    return context.GetFieldValue(Value).ToString();
+                    return context.GetFieldValue(Value).ToString() ?? "";
                 default:
-                    return Value;
+                    return Value ?? "";
             }
         }
 
@@ -184,10 +185,10 @@ namespace Soukoku.ExpressionParser
                 case ExpressionTokenType.Value:
                 case ExpressionTokenType.SingleQuoted:
                 case ExpressionTokenType.DoubleQuoted:
-                    return double.Parse(Value, CultureInfo.CurrentCulture);
+                    return double.Parse(Value, NumberParseStyle, CultureInfo.CurrentCulture);
                 case ExpressionTokenType.Field:
                     if (context == null) { throw new ArgumentNullException("context"); }
-                    return double.Parse(context.GetFieldValue(Value).ToString(), CultureInfo.CurrentCulture);
+                    return double.Parse(context.GetFieldValue(Value).ToString(), NumberParseStyle, CultureInfo.CurrentCulture);
                 default:
                     throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Cannot convert {0}({1}) to a numeric value.", TokenType, Value));
             }
@@ -206,7 +207,7 @@ namespace Soukoku.ExpressionParser
                 case ExpressionTokenType.Value:
                 case ExpressionTokenType.SingleQuoted:
                 case ExpressionTokenType.DoubleQuoted:
-                    return decimal.Parse(Value, CultureInfo.CurrentCulture);
+                    return decimal.Parse(Value, NumberParseStyle, CultureInfo.CurrentCulture);
                 case ExpressionTokenType.Field:
                     if (context == null) { throw new ArgumentNullException("context"); }
                     return decimal.Parse(context.GetFieldValue(Value).ToString(), CultureInfo.CurrentCulture);

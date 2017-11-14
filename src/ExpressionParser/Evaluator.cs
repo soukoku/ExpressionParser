@@ -65,7 +65,7 @@ namespace Soukoku.ExpressionParser
                         break;
                 }
             }
-            
+
             if (_stack.Count == 1)
             {
                 var res = _stack.Pop();
@@ -106,6 +106,41 @@ namespace Soukoku.ExpressionParser
 
         #region operator handling
 
+        static bool IsDate(string lhs, string rhs, out DateTime lhsDate, out DateTime rhsDate)
+        {
+            lhsDate = default(DateTime);
+            rhsDate = default(DateTime);
+
+            if (DateTime.TryParse(lhs, out lhsDate))
+            {
+                DateTime.TryParse(rhs, out rhsDate);
+                return true;
+            }
+            else if (DateTime.TryParse(rhs, out rhsDate))
+            {
+                DateTime.TryParse(lhs, out lhsDate);
+                return true;
+            }
+            return false;
+        }
+        static bool IsNumber(string lhs, string rhs, out decimal lhsNumber, out decimal rhsNumber)
+        {
+            lhsNumber = 0;
+            rhsNumber = 0;
+
+            if (decimal.TryParse(lhs, ExpressionToken.NumberParseStyle, CultureInfo.CurrentCulture, out lhsNumber))
+            {
+                decimal.TryParse(rhs, ExpressionToken.NumberParseStyle, CultureInfo.CurrentCulture, out rhsNumber);
+                return true;
+            }
+            else if (decimal.TryParse(lhs, ExpressionToken.NumberParseStyle, CultureInfo.CurrentCulture, out lhsNumber))
+            {
+                decimal.TryParse(rhs, ExpressionToken.NumberParseStyle, CultureInfo.CurrentCulture, out rhsNumber);
+                return true;
+            }
+            return false;
+        }
+
         private void HandleOperator(OperatorType op)
         {
             switch (op)
@@ -125,24 +160,108 @@ namespace Soukoku.ExpressionParser
                 case OperatorType.Modulus:
                     BinaryNumberOperation((a, b) => a % b);
                     break;
-                //TODO: these logical comparision are likely very badly implemented
+                // these logical comparision can be date/num/string!
                 case OperatorType.LessThan:
-                    BinaryNumberOperation((a, b) => a < b ? 1 : 0);
+                    var rhs = _stack.Pop().ToString(_context);
+                    var lhs = _stack.Pop().ToString(_context);
+
+                    if (IsDate(lhs, rhs, out DateTime lhsDate, out DateTime rhsDate))
+                    {
+                        _stack.Push(lhsDate < rhsDate ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else if (IsNumber(lhs, rhs, out decimal lhsNum, out decimal rhsNum))
+                    {
+                        _stack.Push(lhsNum < rhsNum ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else
+                    {
+                        _stack.Push(string.Compare(lhs, rhs, StringComparison.OrdinalIgnoreCase) < 0 ? ExpressionToken.True : ExpressionToken.False);
+                    }
                     break;
                 case OperatorType.LessThanOrEqual:
-                    BinaryNumberOperation((a, b) => a <= b ? 1 : 0);
+                    rhs = _stack.Pop().ToString(_context);
+                    lhs = _stack.Pop().ToString(_context);
+
+                    if (IsDate(lhs, rhs, out lhsDate, out rhsDate))
+                    {
+                        _stack.Push(lhsDate <= rhsDate ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else if (IsNumber(lhs, rhs, out decimal lhsNum, out decimal rhsNum))
+                    {
+                        _stack.Push(lhsNum <= rhsNum ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else
+                    {
+                        _stack.Push(string.Compare(lhs, rhs, StringComparison.OrdinalIgnoreCase) <= 0 ? ExpressionToken.True : ExpressionToken.False);
+                    }
                     break;
                 case OperatorType.GreaterThan:
-                    BinaryNumberOperation((a, b) => a > b ? 1 : 0);
+                    rhs = _stack.Pop().ToString(_context);
+                    lhs = _stack.Pop().ToString(_context);
+
+                    if (IsDate(lhs, rhs, out lhsDate, out rhsDate))
+                    {
+                        _stack.Push(lhsDate > rhsDate ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else if (IsNumber(lhs, rhs, out decimal lhsNum, out decimal rhsNum))
+                    {
+                        _stack.Push(lhsNum > rhsNum ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else
+                    {
+                        _stack.Push(string.Compare(lhs, rhs, StringComparison.OrdinalIgnoreCase) > 0 ? ExpressionToken.True : ExpressionToken.False);
+                    }
                     break;
                 case OperatorType.GreaterThanOrEqual:
-                    BinaryNumberOperation((a, b) => a >= b ? 1 : 0);
+                    rhs = _stack.Pop().ToString(_context);
+                    lhs = _stack.Pop().ToString(_context);
+
+                    if (IsDate(lhs, rhs, out lhsDate, out rhsDate))
+                    {
+                        _stack.Push(lhsDate >= rhsDate ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else if (IsNumber(lhs, rhs, out decimal lhsNum, out decimal rhsNum))
+                    {
+                        _stack.Push(lhsNum >= rhsNum ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else
+                    {
+                        _stack.Push(string.Compare(lhs, rhs, StringComparison.OrdinalIgnoreCase) >= 0 ? ExpressionToken.True : ExpressionToken.False);
+                    }
                     break;
                 case OperatorType.Equal:
-                    BinaryLogicOperation((a, b) => string.Equals(a ?? string.Empty, b ?? string.Empty, StringComparison.OrdinalIgnoreCase));
+                    rhs = _stack.Pop().ToString(_context);
+                    lhs = _stack.Pop().ToString(_context);
+
+                    if (IsDate(lhs, rhs, out lhsDate, out rhsDate))
+                    {
+                        _stack.Push(lhsDate == rhsDate ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else if (IsNumber(lhs, rhs, out decimal lhsNum, out decimal rhsNum))
+                    {
+                        _stack.Push(lhsNum == rhsNum ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else
+                    {
+                        _stack.Push(string.Compare(lhs, rhs, StringComparison.OrdinalIgnoreCase) == 0 ? ExpressionToken.True : ExpressionToken.False);
+                    }
                     break;
                 case OperatorType.NotEqual:
-                    BinaryLogicOperation((a, b) => !string.Equals(a ?? string.Empty, b ?? string.Empty, StringComparison.OrdinalIgnoreCase));
+                    rhs = _stack.Pop().ToString(_context);
+                    lhs = _stack.Pop().ToString(_context);
+
+                    if (IsDate(lhs, rhs, out lhsDate, out rhsDate))
+                    {
+                        _stack.Push(lhsDate != rhsDate ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else if (IsNumber(lhs, rhs, out decimal lhsNum, out decimal rhsNum))
+                    {
+                        _stack.Push(lhsNum != rhsNum ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else
+                    {
+                        _stack.Push(string.Compare(lhs, rhs, StringComparison.OrdinalIgnoreCase) != 0 ? ExpressionToken.True : ExpressionToken.False);
+                    }
                     break;
                 case OperatorType.BitwiseAnd:
                     BinaryNumberOperation((a, b) => (int)a & (int)b);

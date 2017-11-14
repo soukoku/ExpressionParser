@@ -21,9 +21,9 @@ namespace Soukoku.ExpressionParser
             _result = new Evaluator(context).Evaluate(input, coerse).Value;
         }
 
-        private void ExpectResult(string expected)
+        private void ExpectResult(string expected, string message = null)
         {
-            Assert.AreEqual(expected, _result);
+            Assert.AreEqual(expected, _result, message);
         }
 
         #endregion
@@ -288,6 +288,76 @@ namespace Soukoku.ExpressionParser
         {
             GivenInput("{sample} != ''", new EvaluationContext(field => null));
             ExpectResult("0");
+        }
+
+        // date comparison
+
+        [TestMethod]
+        public void Handle_Two_Dates_Logical_Comparisons()
+        {
+            GivenInput("'2017/11/1' < '2018/11/1'", new EvaluationContext(field => null));
+            ExpectResult("1", "< failed");
+            GivenInput("'2017/11/1' <= '2018/11/1'", new EvaluationContext(field => null));
+            ExpectResult("1", "<= failed");
+
+            GivenInput("'2017/11/1' > '2018/11/1'", new EvaluationContext(field => null));
+            ExpectResult("0", "> failed");
+            GivenInput("'2017/11/1' >= '2018/11/1'", new EvaluationContext(field => null));
+            ExpectResult("0", ">= failed");
+
+            GivenInput("'2017/11/1' == '2018/11/1'", new EvaluationContext(field => null));
+            ExpectResult("0", "== failed");
+            GivenInput("'2017/11/1' == '2017/11/1'", new EvaluationContext(field => null));
+            ExpectResult("1", "== failed 2");
+
+            GivenInput("'2017/11/1' != '2017/11/1'", new EvaluationContext(field => null));
+            ExpectResult("0", "!= failed");
+            GivenInput("'2017/11/1' != '2018/11/1'", new EvaluationContext(field => null));
+            ExpectResult("1", "!= failed 2");
+        }
+
+        [TestMethod]
+        public void Handle_Lhs_Date_Logical_Comparisons()
+        {
+            // empty date is assumed minimum
+
+            GivenInput("'2017/11/1' < ''", new EvaluationContext(field => null));
+            ExpectResult("0", "< failed");
+            GivenInput("'2017/11/1' <= ''", new EvaluationContext(field => null));
+            ExpectResult("0", "<= failed");
+
+            GivenInput("'2017/11/1' > ''", new EvaluationContext(field => null));
+            ExpectResult("1", "> failed");
+            GivenInput("'2017/11/1' >= ''", new EvaluationContext(field => null));
+            ExpectResult("1", ">= failed");
+
+            GivenInput("'2017/11/1' == ''", new EvaluationContext(field => null));
+            ExpectResult("0", "== failed");
+
+            GivenInput("'2017/11/1' != ''", new EvaluationContext(field => null));
+            ExpectResult("1", "!= failed");
+        }
+
+        [TestMethod]
+        public void Handle_Rhs_Date_Logical_Comparisons()
+        {
+            // empty date is assumed minimum
+
+            GivenInput("'' < '2018/11/1'", new EvaluationContext(field => null));
+            ExpectResult("1", "< failed");
+            GivenInput("'' <= '2018/11/1'", new EvaluationContext(field => null));
+            ExpectResult("1", "<= failed");
+
+            GivenInput("'' > '2018/11/1'", new EvaluationContext(field => null));
+            ExpectResult("0", "> failed");
+            GivenInput("'' >= '2018/11/1'", new EvaluationContext(field => null));
+            ExpectResult("0", ">= failed");
+
+            GivenInput("'' == '2018/11/1'", new EvaluationContext(field => null));
+            ExpectResult("0", "== failed");
+
+            GivenInput("'' != '2017/11/1'", new EvaluationContext(field => null));
+            ExpectResult("1", "!= failed");
         }
     }
 }
