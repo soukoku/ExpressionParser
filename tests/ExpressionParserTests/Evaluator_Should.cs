@@ -339,6 +339,31 @@ namespace Soukoku.ExpressionParser
             ExpectResult("0", "8th");
         }
 
+        [TestMethod]
+        public void Empty_String_Against_Bool_String_Do_Not_Implicitly_Use_Bool_Operation()
+        {
+            // all results should be false (0)
+
+            GivenInput("'' == true", new EvaluationContext(field => null));
+            ExpectResult("0", "1st");
+            GivenInput("true == ''", new EvaluationContext(field => null));
+            ExpectResult("0", "2nd");
+            GivenInput("'' == 'true'", new EvaluationContext(field => null));
+            ExpectResult("0", "3rd");
+            GivenInput("'true' == ''", new EvaluationContext(field => null));
+            ExpectResult("0", "4th");
+
+
+            GivenInput("'' == false", new EvaluationContext(field => null));
+            ExpectResult("0", "5th");
+            GivenInput("false == ''", new EvaluationContext(field => null));
+            ExpectResult("0", "6th");
+            GivenInput("'' == 'false'", new EvaluationContext(field => null));
+            ExpectResult("0", "7th");
+            GivenInput("'false' == ''", new EvaluationContext(field => null));
+            ExpectResult("0", "8th");
+        }
+
 
 
 

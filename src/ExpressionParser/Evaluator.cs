@@ -145,24 +145,24 @@ namespace Soukoku.ExpressionParser
             lhsBool = false;
             rhsBool = false;
 
-            if (string.Equals(lhs, "true", StringComparison.Ordinal))
+            if (string.Equals(lhs, "true", StringComparison.Ordinal) && !string.IsNullOrEmpty(rhs))
             {
                 lhsBool = true;
                 rhsBool = IsTrue(rhs);
                 return true;
             }
-            else if (string.Equals(lhs, "false", StringComparison.Ordinal))
+            else if (string.Equals(lhs, "false", StringComparison.Ordinal) && !string.IsNullOrEmpty(rhs))
             {
                 rhsBool = IsTrue(rhs);
                 return true;
             }
-            else if (string.Equals(rhs, "true", StringComparison.Ordinal))
+            else if (string.Equals(rhs, "true", StringComparison.Ordinal) && !string.IsNullOrEmpty(lhs))
             {
                 rhsBool = true;
                 lhsBool = IsTrue(lhs);
                 return true;
             }
-            else if (string.Equals(rhs, "false", StringComparison.Ordinal))
+            else if (string.Equals(rhs, "false", StringComparison.Ordinal) && !string.IsNullOrEmpty(lhs))
             {
                 lhsBool = IsTrue(lhs);
                 return true;
