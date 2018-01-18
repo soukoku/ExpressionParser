@@ -340,7 +340,7 @@ namespace Soukoku.ExpressionParser
         }
 
         [TestMethod]
-        public void Empty_String_Against_Bool_String_Do_Not_Implicitly_Use_Bool_Operation()
+        public void Not_Implicitly_Use_Bool_Operation_Comparing_Empty_String_Against_Bool_String()
         {
             // all results should be false (0)
 
