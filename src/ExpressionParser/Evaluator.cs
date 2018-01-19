@@ -142,32 +142,64 @@ namespace Soukoku.ExpressionParser
         }
         static bool IsBoolean(string lhs, string rhs, out bool lhsBool, out bool rhsBool)
         {
+            bool lIsBool = false;
+            bool rIsBool = false;
             lhsBool = false;
             rhsBool = false;
 
-            if (string.Equals(lhs, "true", StringComparison.Ordinal) && !string.IsNullOrEmpty(rhs))
+            if (!string.IsNullOrEmpty(lhs))
             {
-                lhsBool = true;
-                rhsBool = IsTrue(rhs);
-                return true;
+                if (string.Equals(lhs, "true", StringComparison.OrdinalIgnoreCase) || lhs == "1")
+                {
+                    lhsBool = true;
+                    lIsBool = true;
+                }
+                else if (string.Equals(lhs, "false", StringComparison.OrdinalIgnoreCase) || lhs == "0")
+                {
+                    lIsBool = true;
+                }
             }
-            else if (string.Equals(lhs, "false", StringComparison.Ordinal) && !string.IsNullOrEmpty(rhs))
+
+            if (lIsBool && !string.IsNullOrEmpty(rhs))
             {
-                rhsBool = IsTrue(rhs);
-                return true;
+                if (string.Equals(rhs, "true", StringComparison.OrdinalIgnoreCase) || rhs == "1")
+                {
+                    rhsBool = true;
+                    rIsBool = true;
+                }
+                else if (string.Equals(rhs, "false", StringComparison.OrdinalIgnoreCase) || rhs == "0")
+                {
+                    rIsBool = true;
+                }
             }
-            else if (string.Equals(rhs, "true", StringComparison.Ordinal) && !string.IsNullOrEmpty(lhs))
-            {
-                rhsBool = true;
-                lhsBool = IsTrue(lhs);
-                return true;
-            }
-            else if (string.Equals(rhs, "false", StringComparison.Ordinal) && !string.IsNullOrEmpty(lhs))
-            {
-                lhsBool = IsTrue(lhs);
-                return true;
-            }
-            return false;
+            return lIsBool && rIsBool;
+
+            //lhsBool = false;
+            //rhsBool = false;
+
+            //if (string.Equals(lhs, "true", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(rhs))
+            //{
+            //    lhsBool = true;
+            //    rhsBool = IsTrue(rhs);
+            //    return true;
+            //}
+            //else if (string.Equals(lhs, "false", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(rhs))
+            //{
+            //    rhsBool = IsTrue(rhs);
+            //    return true;
+            //}
+            //else if (string.Equals(rhs, "true", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(lhs))
+            //{
+            //    rhsBool = true;
+            //    lhsBool = IsTrue(lhs);
+            //    return true;
+            //}
+            //else if (string.Equals(rhs, "false", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(lhs))
+            //{
+            //    lhsBool = IsTrue(lhs);
+            //    return true;
+            //}
+            //return false;
         }
 
         private void HandleOperator(OperatorType op)

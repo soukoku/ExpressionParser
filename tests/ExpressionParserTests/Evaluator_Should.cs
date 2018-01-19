@@ -366,6 +366,32 @@ namespace Soukoku.ExpressionParser
 
 
 
+        [TestMethod]
+        public void Not_Implicitly_Use_Bool_Operation_Comparing_Non_Boolean_String_Against_Bool_String()
+        {
+            // all results should be false (0)
+
+            GivenInput("'ABC' == true", new EvaluationContext(field => null));
+            ExpectResult("0", "1st");
+            GivenInput("true == 'ABC'", new EvaluationContext(field => null));
+            ExpectResult("0", "2nd");
+            GivenInput("'ABC' == 'true'", new EvaluationContext(field => null));
+            ExpectResult("0", "3rd");
+            GivenInput("'true' == 'ABC'", new EvaluationContext(field => null));
+            ExpectResult("0", "4th");
+
+
+            GivenInput("'ABC' == false", new EvaluationContext(field => null));
+            ExpectResult("0", "5th");
+            GivenInput("false == 'ABC'", new EvaluationContext(field => null));
+            ExpectResult("0", "6th");
+            GivenInput("'ABC' == 'false'", new EvaluationContext(field => null));
+            ExpectResult("0", "7th");
+            GivenInput("'false' == 'ABC'", new EvaluationContext(field => null));
+            ExpectResult("0", "8th");
+        }
+
+
 
         // date comparison
 
