@@ -128,17 +128,10 @@ namespace Soukoku.ExpressionParser
             lhsNumber = 0;
             rhsNumber = 0;
 
-            if (decimal.TryParse(lhs, ExpressionToken.NumberParseStyle, CultureInfo.CurrentCulture, out lhsNumber))
-            {
-                decimal.TryParse(rhs, ExpressionToken.NumberParseStyle, CultureInfo.CurrentCulture, out rhsNumber);
-                return true;
-            }
-            else if (decimal.TryParse(lhs, ExpressionToken.NumberParseStyle, CultureInfo.CurrentCulture, out lhsNumber))
-            {
-                decimal.TryParse(rhs, ExpressionToken.NumberParseStyle, CultureInfo.CurrentCulture, out rhsNumber);
-                return true;
-            }
-            return false;
+            var islNum = decimal.TryParse(lhs, ExpressionToken.NumberParseStyle, CultureInfo.CurrentCulture, out lhsNumber);
+            var isrNum = decimal.TryParse(rhs, ExpressionToken.NumberParseStyle, CultureInfo.CurrentCulture, out rhsNumber);
+
+            return islNum && isrNum;
         }
         static bool IsBoolean(string lhs, string rhs, out bool lhsBool, out bool rhsBool)
         {

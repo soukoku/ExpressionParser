@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.0;net40</TargetFrameworks>
-    <Version>2.3.1</Version>
+    <TargetFrameworks>netstandard1.0;netstandard2.0;net40</TargetFrameworks>
+    <Version>2.4.0</Version>
     <PackageProjectUrl>https://github.com/soukoku/ExpressionParser</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/soukoku/ExpressionParser/master/LICENSE</PackageLicenseUrl>
     <Authors>Yin-Chun Wang</Authors>
@@ -19,14 +19,7 @@
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netstandard1.0'">
-    <DocumentationFile>bin\Release\netstandard1.0\ExpressionParser.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net40'">
-    <DocumentationFile>bin\Release\net40\ExpressionParser.xml</DocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
 </Project>

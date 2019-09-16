@@ -293,6 +293,14 @@ namespace Soukoku.ExpressionParser
 
         // implicit boolean
 
+
+        [TestMethod]
+        public void Return_0_For_0_And_Y_Equality()
+        {
+            GivenInput("1 == 'Y'");
+            ExpectResult("0");
+        }
+
         [TestMethod]
         public void One_And_Zero_Are_Implicit_True_And_False_For_Equals_Op()
         {
