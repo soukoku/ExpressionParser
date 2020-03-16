@@ -302,6 +302,16 @@ namespace Soukoku.ExpressionParser
         }
 
         [TestMethod]
+        public void Return_1_For_Same_GLE()
+        {
+            GivenInput("1 >= 1");
+            ExpectResult("1");
+
+            GivenInput("1 <= 1");
+            ExpectResult("1");
+        }
+
+        [TestMethod]
         public void One_And_Zero_Are_Implicit_True_And_False_For_Equals_Op()
         {
             GivenInput("1 == true", new EvaluationContext(field => null));
