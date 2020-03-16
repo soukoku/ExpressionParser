@@ -23,7 +23,7 @@ namespace Soukoku.ExpressionParser.Parsing
             {"==", OperatorType.Equal },
             {"!=", OperatorType.NotEqual},
             {"<=", OperatorType.LessThanOrEqual },
-            {">=", OperatorType.GreaterThan },
+            {">=", OperatorType.GreaterThanOrEqual },
             {"&&", OperatorType.LogicalAnd },
             {"||", OperatorType.LogicalOr },
 
