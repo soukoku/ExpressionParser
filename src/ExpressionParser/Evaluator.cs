@@ -219,13 +219,13 @@ namespace Soukoku.ExpressionParser
                     var rhs = _stack.Pop().ToString(_context);
                     var lhs = _stack.Pop().ToString(_context);
 
-                    if (IsDate(lhs, rhs, out DateTime lhsDate, out DateTime rhsDate))
-                    {
-                        _stack.Push(lhsDate < rhsDate ? ExpressionToken.True : ExpressionToken.False);
-                    }
-                    else if (IsNumber(lhs, rhs, out decimal lhsNum, out decimal rhsNum))
+                    if (IsNumber(lhs, rhs, out decimal lhsNum, out decimal rhsNum))
                     {
                         _stack.Push(lhsNum < rhsNum ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else if (IsDate(lhs, rhs, out DateTime lhsDate, out DateTime rhsDate))
+                    {
+                        _stack.Push(lhsDate < rhsDate ? ExpressionToken.True : ExpressionToken.False);
                     }
                     else
                     {
@@ -236,13 +236,13 @@ namespace Soukoku.ExpressionParser
                     rhs = _stack.Pop().ToString(_context);
                     lhs = _stack.Pop().ToString(_context);
 
-                    if (IsDate(lhs, rhs, out lhsDate, out rhsDate))
-                    {
-                        _stack.Push(lhsDate <= rhsDate ? ExpressionToken.True : ExpressionToken.False);
-                    }
-                    else if (IsNumber(lhs, rhs, out decimal lhsNum, out decimal rhsNum))
+                    if (IsNumber(lhs, rhs, out lhsNum, out rhsNum))
                     {
                         _stack.Push(lhsNum <= rhsNum ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else if (IsDate(lhs, rhs, out DateTime lhsDate, out DateTime rhsDate))
+                    {
+                        _stack.Push(lhsDate <= rhsDate ? ExpressionToken.True : ExpressionToken.False);
                     }
                     else
                     {
@@ -253,13 +253,13 @@ namespace Soukoku.ExpressionParser
                     rhs = _stack.Pop().ToString(_context);
                     lhs = _stack.Pop().ToString(_context);
 
-                    if (IsDate(lhs, rhs, out lhsDate, out rhsDate))
-                    {
-                        _stack.Push(lhsDate > rhsDate ? ExpressionToken.True : ExpressionToken.False);
-                    }
-                    else if (IsNumber(lhs, rhs, out decimal lhsNum, out decimal rhsNum))
+                    if (IsNumber(lhs, rhs, out lhsNum, out rhsNum))
                     {
                         _stack.Push(lhsNum > rhsNum ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else if (IsDate(lhs, rhs, out DateTime lhsDate, out DateTime rhsDate))
+                    {
+                        _stack.Push(lhsDate > rhsDate ? ExpressionToken.True : ExpressionToken.False);
                     }
                     else
                     {
@@ -270,13 +270,13 @@ namespace Soukoku.ExpressionParser
                     rhs = _stack.Pop().ToString(_context);
                     lhs = _stack.Pop().ToString(_context);
 
-                    if (IsDate(lhs, rhs, out lhsDate, out rhsDate))
-                    {
-                        _stack.Push(lhsDate >= rhsDate ? ExpressionToken.True : ExpressionToken.False);
-                    }
-                    else if (IsNumber(lhs, rhs, out decimal lhsNum, out decimal rhsNum))
+                    if (IsNumber(lhs, rhs, out lhsNum, out rhsNum))
                     {
                         _stack.Push(lhsNum >= rhsNum ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else if (IsDate(lhs, rhs, out DateTime lhsDate, out DateTime rhsDate))
+                    {
+                        _stack.Push(lhsDate >= rhsDate ? ExpressionToken.True : ExpressionToken.False);
                     }
                     else
                     {
@@ -287,17 +287,17 @@ namespace Soukoku.ExpressionParser
                     rhs = _stack.Pop().ToString(_context);
                     lhs = _stack.Pop().ToString(_context);
 
-                    if (IsDate(lhs, rhs, out lhsDate, out rhsDate))
-                    {
-                        _stack.Push(lhsDate == rhsDate ? ExpressionToken.True : ExpressionToken.False);
-                    }
-                    else if (IsBoolean(lhs, rhs, out bool lhsBool, out bool rhsBool))
+                    if (IsBoolean(lhs, rhs, out bool lhsBool, out bool rhsBool))
                     {
                         _stack.Push(lhsBool == rhsBool ? ExpressionToken.True : ExpressionToken.False);
                     }
-                    else if (IsNumber(lhs, rhs, out decimal lhsNum, out decimal rhsNum))
+                    else if (IsNumber(lhs, rhs, out lhsNum, out rhsNum))
                     {
                         _stack.Push(lhsNum == rhsNum ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else if (IsDate(lhs, rhs, out DateTime lhsDate, out DateTime rhsDate))
+                    {
+                        _stack.Push(lhsDate == rhsDate ? ExpressionToken.True : ExpressionToken.False);
                     }
                     else
                     {
@@ -308,17 +308,17 @@ namespace Soukoku.ExpressionParser
                     rhs = _stack.Pop().ToString(_context);
                     lhs = _stack.Pop().ToString(_context);
 
-                    if (IsDate(lhs, rhs, out lhsDate, out rhsDate))
-                    {
-                        _stack.Push(lhsDate != rhsDate ? ExpressionToken.True : ExpressionToken.False);
-                    }
-                    else if (IsBoolean(lhs, rhs, out bool lhsBool, out bool rhsBool))
+                    if (IsBoolean(lhs, rhs, out lhsBool, out rhsBool))
                     {
                         _stack.Push(lhsBool != rhsBool ? ExpressionToken.True : ExpressionToken.False);
                     }
-                    else if (IsNumber(lhs, rhs, out decimal lhsNum, out decimal rhsNum))
+                    else if (IsNumber(lhs, rhs, out lhsNum, out rhsNum))
                     {
                         _stack.Push(lhsNum != rhsNum ? ExpressionToken.True : ExpressionToken.False);
+                    }
+                    else if (IsDate(lhs, rhs, out DateTime lhsDate, out DateTime rhsDate))
+                    {
+                        _stack.Push(lhsDate != rhsDate ? ExpressionToken.True : ExpressionToken.False);
                     }
                     else
                     {

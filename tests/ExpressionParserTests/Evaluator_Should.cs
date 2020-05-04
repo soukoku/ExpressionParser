@@ -312,6 +312,16 @@ namespace Soukoku.ExpressionParser
         }
 
         [TestMethod]
+        public void Return_1_For_Simple_GLE()
+        {
+            GivenInput("5.1 >= 4.0");
+            ExpectResult("1", "5.1 >= 4.0 fail");
+
+            GivenInput("3.8 <= 4.0");
+            ExpectResult("1", "3.8 <= 4.0 fail");
+        }
+
+        [TestMethod]
         public void One_And_Zero_Are_Implicit_True_And_False_For_Equals_Op()
         {
             GivenInput("1 == true", new EvaluationContext(field => null));
