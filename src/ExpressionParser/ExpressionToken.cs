@@ -210,7 +210,7 @@ namespace Soukoku.ExpressionParser
                     return decimal.Parse(Value, NumberParseStyle, CultureInfo.CurrentCulture);
                 case ExpressionTokenType.Field:
                     if (context == null) { throw new ArgumentNullException("context"); }
-                    return decimal.Parse(context.GetFieldValue(Value).ToString(), CultureInfo.CurrentCulture);
+                    return decimal.Parse(context.GetFieldValue(Value).ToString(), NumberParseStyle, CultureInfo.CurrentCulture);
                 default:
                     throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Cannot convert {0}({1}) to a numeric value.", TokenType, Value));
             }

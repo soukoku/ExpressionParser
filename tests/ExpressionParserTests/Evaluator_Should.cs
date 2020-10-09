@@ -149,6 +149,20 @@ namespace Soukoku.ExpressionParser
         }
 
         [TestMethod]
+        public void Support_Currency_Formatted_Numbers_For_Simple_Calc()
+        {
+            GivenInput("$500 + $.30");
+            ExpectResult("500.30");
+        }
+
+        [TestMethod]
+        public void Support_Currency_Formatted_Field_For_Simple_Calc()
+        {
+            GivenInput("{whatever} + $.30", new EvaluationContext(field => "$500"));
+            ExpectResult("500.30");
+        }
+
+        [TestMethod]
         public void Support_Custom_Function_With_BuiltIn_Operator()
         {
             var ctx = new EvaluationContext(null);

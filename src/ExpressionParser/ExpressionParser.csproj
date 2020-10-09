@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0;netstandard2.0;net40</TargetFrameworks>
-    <Version>2.4.3</Version>
+    <Version>2.4.4</Version>
     <PackageProjectUrl>https://github.com/soukoku/ExpressionParser</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/soukoku/ExpressionParser/master/LICENSE</PackageLicenseUrl>
     <Authors>Yin-Chun Wang</Authors>
