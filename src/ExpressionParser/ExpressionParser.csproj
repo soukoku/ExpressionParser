@@ -3,8 +3,11 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0;netstandard2.0;net40</TargetFrameworks>
     <Version>3.0.0</Version>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
     <PackageProjectUrl>https://github.com/soukoku/ExpressionParser</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/soukoku/ExpressionParser/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/soukoku/ExpressionParser</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <Authors>Yin-Chun Wang</Authors>
     <Company>Yin-Chun Wang</Company>
     <PackageId>Soukoku.ExpressionParser</PackageId>
@@ -14,15 +17,18 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Sign.snk</AssemblyOriginatorKeyFile>
     <Copyright>Copyright © Yin-Chun Wang 2016</Copyright>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
