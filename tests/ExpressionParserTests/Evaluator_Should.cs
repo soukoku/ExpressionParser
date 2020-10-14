@@ -158,7 +158,7 @@ namespace Soukoku.ExpressionParser
         [TestMethod]
         public void Support_Currency_Formatted_Field_For_Simple_Calc()
         {
-            GivenInput("{whatever} + $.30", new EvaluationContext(field => "$500"));
+            GivenInput("{whatever} + $.30", new EvaluationContext(field => ("$500", ValueTypeHint.Auto)));
             ExpectResult("500.30");
         }
 
@@ -293,17 +293,49 @@ namespace Soukoku.ExpressionParser
         [TestMethod]
         public void Return_1_For_Equaling_NullField_With_Empty_String()
         {
-            GivenInput("{sample} == ''", new EvaluationContext(field => null));
+            GivenInput("{sample} == ''", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1");
         }
 
         [TestMethod]
         public void Return_0_For_NotEqualing_NullField_With_Empty_String()
         {
-            GivenInput("{sample} != ''", new EvaluationContext(field => null));
+            GivenInput("{sample} != ''", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0");
         }
 
+        [TestMethod]
+        public void Support_Leading_0_Field_Value_As_Number_Comparison()
+        {
+            GivenInput("{field1} == {field2}", new EvaluationContext(field =>
+            {
+                switch (field)
+                {
+                    case "field1":
+                        return ("01234", ValueTypeHint.Auto);
+                    case "field2":
+                        return ("001234", ValueTypeHint.Auto);
+                }
+                return ("", ValueTypeHint.Auto);
+            }));
+            ExpectResult("1");
+        }
+        [TestMethod]
+        public void Support_Forcing_Field_As_String_Comparison()
+        {
+            GivenInput("{field1} == {field2}", new EvaluationContext(field =>
+            {
+                switch (field)
+                {
+                    case "field1":
+                        return ("01234", ValueTypeHint.Text);
+                    case "field2":
+                        return ("001234", ValueTypeHint.Text);
+                }
+                return ("", ValueTypeHint.Text);
+            }));
+            ExpectResult("0");
+        }
 
         // implicit boolean
 
@@ -338,46 +370,46 @@ namespace Soukoku.ExpressionParser
         [TestMethod]
         public void One_And_Zero_Are_Implicit_True_And_False_For_Equals_Op()
         {
-            GivenInput("1 == true", new EvaluationContext(field => null));
+            GivenInput("1 == true", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1", "1st");
-            GivenInput("true == 1", new EvaluationContext(field => null));
+            GivenInput("true == 1", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1", "2nd");
-            GivenInput("0 == true", new EvaluationContext(field => null));
+            GivenInput("0 == true", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "3rd");
-            GivenInput("true == 0", new EvaluationContext(field => null));
+            GivenInput("true == 0", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "4th");
 
 
-            GivenInput("1 == false", new EvaluationContext(field => null));
+            GivenInput("1 == false", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "5th");
-            GivenInput("false == 1", new EvaluationContext(field => null));
+            GivenInput("false == 1", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "6th");
-            GivenInput("0 == false", new EvaluationContext(field => null));
+            GivenInput("0 == false", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1", "7th");
-            GivenInput("false == 0", new EvaluationContext(field => null));
+            GivenInput("false == 0", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1", "8th");
         }
 
         [TestMethod]
         public void One_And_Zero_Are_Implicit_True_And_False_For_NotEquals_Op()
         {
-            GivenInput("1 != true", new EvaluationContext(field => null));
+            GivenInput("1 != true", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "1st");
-            GivenInput("true != 1", new EvaluationContext(field => null));
+            GivenInput("true != 1", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "2nd");
-            GivenInput("0 != true", new EvaluationContext(field => null));
+            GivenInput("0 != true", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1", "3rd");
-            GivenInput("true != 0", new EvaluationContext(field => null));
+            GivenInput("true != 0", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1", "4th");
 
 
-            GivenInput("1 != false", new EvaluationContext(field => null));
+            GivenInput("1 != false", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1", "5th");
-            GivenInput("false != 1", new EvaluationContext(field => null));
+            GivenInput("false != 1", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1", "6th");
-            GivenInput("0 != false", new EvaluationContext(field => null));
+            GivenInput("0 != false", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "7th");
-            GivenInput("false != 0", new EvaluationContext(field => null));
+            GivenInput("false != 0", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "8th");
         }
 
@@ -386,23 +418,23 @@ namespace Soukoku.ExpressionParser
         {
             // all results should be false (0)
 
-            GivenInput("'' == true", new EvaluationContext(field => null));
+            GivenInput("'' == true", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "1st");
-            GivenInput("true == ''", new EvaluationContext(field => null));
+            GivenInput("true == ''", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "2nd");
-            GivenInput("'' == 'true'", new EvaluationContext(field => null));
+            GivenInput("'' == 'true'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "3rd");
-            GivenInput("'true' == ''", new EvaluationContext(field => null));
+            GivenInput("'true' == ''", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "4th");
 
 
-            GivenInput("'' == false", new EvaluationContext(field => null));
+            GivenInput("'' == false", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "5th");
-            GivenInput("false == ''", new EvaluationContext(field => null));
+            GivenInput("false == ''", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "6th");
-            GivenInput("'' == 'false'", new EvaluationContext(field => null));
+            GivenInput("'' == 'false'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "7th");
-            GivenInput("'false' == ''", new EvaluationContext(field => null));
+            GivenInput("'false' == ''", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "8th");
         }
 
@@ -413,23 +445,23 @@ namespace Soukoku.ExpressionParser
         {
             // all results should be false (0)
 
-            GivenInput("'ABC' == true", new EvaluationContext(field => null));
+            GivenInput("'ABC' == true", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "1st");
-            GivenInput("true == 'ABC'", new EvaluationContext(field => null));
+            GivenInput("true == 'ABC'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "2nd");
-            GivenInput("'ABC' == 'true'", new EvaluationContext(field => null));
+            GivenInput("'ABC' == 'true'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "3rd");
-            GivenInput("'true' == 'ABC'", new EvaluationContext(field => null));
+            GivenInput("'true' == 'ABC'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "4th");
 
 
-            GivenInput("'ABC' == false", new EvaluationContext(field => null));
+            GivenInput("'ABC' == false", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "5th");
-            GivenInput("false == 'ABC'", new EvaluationContext(field => null));
+            GivenInput("false == 'ABC'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "6th");
-            GivenInput("'ABC' == 'false'", new EvaluationContext(field => null));
+            GivenInput("'ABC' == 'false'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "7th");
-            GivenInput("'false' == 'ABC'", new EvaluationContext(field => null));
+            GivenInput("'false' == 'ABC'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "8th");
         }
 
@@ -440,24 +472,24 @@ namespace Soukoku.ExpressionParser
         [TestMethod]
         public void Handle_Two_Dates_Logical_Comparisons()
         {
-            GivenInput("'2017/11/1' < '2018/11/1'", new EvaluationContext(field => null));
+            GivenInput("'2017/11/1' < '2018/11/1'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1", "< failed");
-            GivenInput("'2017/11/1' <= '2018/11/1'", new EvaluationContext(field => null));
+            GivenInput("'2017/11/1' <= '2018/11/1'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1", "<= failed");
 
-            GivenInput("'2017/11/1' > '2018/11/1'", new EvaluationContext(field => null));
+            GivenInput("'2017/11/1' > '2018/11/1'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "> failed");
-            GivenInput("'2017/11/1' >= '2018/11/1'", new EvaluationContext(field => null));
+            GivenInput("'2017/11/1' >= '2018/11/1'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", ">= failed");
 
-            GivenInput("'2017/11/1' == '2018/11/1'", new EvaluationContext(field => null));
+            GivenInput("'2017/11/1' == '2018/11/1'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "== failed");
-            GivenInput("'2017/11/1' == '2017/11/1'", new EvaluationContext(field => null));
+            GivenInput("'2017/11/1' == '2017/11/1'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1", "== failed 2");
 
-            GivenInput("'2017/11/1' != '2017/11/1'", new EvaluationContext(field => null));
+            GivenInput("'2017/11/1' != '2017/11/1'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "!= failed");
-            GivenInput("'2017/11/1' != '2018/11/1'", new EvaluationContext(field => null));
+            GivenInput("'2017/11/1' != '2018/11/1'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1", "!= failed 2");
         }
 
@@ -466,20 +498,20 @@ namespace Soukoku.ExpressionParser
         {
             // empty date is assumed minimum
 
-            GivenInput("'2017/11/1' < ''", new EvaluationContext(field => null));
+            GivenInput("'2017/11/1' < ''", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "< failed");
-            GivenInput("'2017/11/1' <= ''", new EvaluationContext(field => null));
+            GivenInput("'2017/11/1' <= ''", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "<= failed");
 
-            GivenInput("'2017/11/1' > ''", new EvaluationContext(field => null));
+            GivenInput("'2017/11/1' > ''", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1", "> failed");
-            GivenInput("'2017/11/1' >= ''", new EvaluationContext(field => null));
+            GivenInput("'2017/11/1' >= ''", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1", ">= failed");
 
-            GivenInput("'2017/11/1' == ''", new EvaluationContext(field => null));
+            GivenInput("'2017/11/1' == ''", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "== failed");
 
-            GivenInput("'2017/11/1' != ''", new EvaluationContext(field => null));
+            GivenInput("'2017/11/1' != ''", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1", "!= failed");
         }
 
@@ -488,20 +520,20 @@ namespace Soukoku.ExpressionParser
         {
             // empty date is assumed minimum
 
-            GivenInput("'' < '2018/11/1'", new EvaluationContext(field => null));
+            GivenInput("'' < '2018/11/1'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1", "< failed");
-            GivenInput("'' <= '2018/11/1'", new EvaluationContext(field => null));
+            GivenInput("'' <= '2018/11/1'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1", "<= failed");
 
-            GivenInput("'' > '2018/11/1'", new EvaluationContext(field => null));
+            GivenInput("'' > '2018/11/1'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "> failed");
-            GivenInput("'' >= '2018/11/1'", new EvaluationContext(field => null));
+            GivenInput("'' >= '2018/11/1'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", ">= failed");
 
-            GivenInput("'' == '2018/11/1'", new EvaluationContext(field => null));
+            GivenInput("'' == '2018/11/1'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("0", "== failed");
 
-            GivenInput("'' != '2017/11/1'", new EvaluationContext(field => null));
+            GivenInput("'' != '2017/11/1'", new EvaluationContext(field => (null, ValueTypeHint.Auto)));
             ExpectResult("1", "!= failed");
         }
     }

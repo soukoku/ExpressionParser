@@ -107,12 +107,17 @@ namespace Soukoku.ExpressionParser
         string _value;
 
         /// <summary>
-        /// Gets the token value.
+        /// Gets the raw token value.
         /// </summary>
         /// <value>
         /// The value.
         /// </value>
         public string Value { get { return _value ?? _rawToken?.ToString(); } }
+
+        /// <summary>
+        /// Gets the resolved field value and type hint if token is a field.
+        /// </summary>
+        public (object Value, ValueTypeHint TypeHint) FieldValue { get; internal set; }
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
@@ -122,55 +127,50 @@ namespace Soukoku.ExpressionParser
         /// </returns>
         public override string ToString()
         {
-            return Value;
+            switch (TokenType)
+            {
+                case ExpressionTokenType.Field:
+                    return FieldValue.Value?.ToString() ?? "";
+                default:
+                    return Value ?? "";
+            }
         }
 
 
         #region conversion routines
 
-        /// <summary>
-        /// Check if the value is considered numeric.
-        /// </summary>
-        /// <returns></returns>
-        public bool IsNumeric()
-        {
-            return decimal.TryParse(Value, NumberParseStyle, CultureInfo.CurrentCulture, out decimal dummy);
-        }
+        ///// <summary>
+        ///// Check if the value is considered numeric.
+        ///// </summary>
+        ///// <returns></returns>
+        //public bool IsNumeric()
+        //{
+        //    if (TokenType == ExpressionTokenType.Field && FieldValue.TypeHint == ValueTypeHint.Text) return false;
 
-        /// <summary>
-        /// Check if the value is considered true.
-        /// </summary>
-        /// <returns></returns>
-        public bool IsTrue(string value)
-        {
-            return string.Equals("true", Value, StringComparison.OrdinalIgnoreCase) || value == "1";
-        }
+        //    return decimal.TryParse(Value, NumberParseStyle, CultureInfo.CurrentCulture, out decimal dummy);
+        //}
 
-        /// <summary>
-        /// Check if the value is considered false.
-        /// </summary>
-        /// <returns></returns>
-        public bool IsFalse(string value)
-        {
-            return string.Equals("false", Value, StringComparison.OrdinalIgnoreCase) || value == "0";
-        }
+        ///// <summary>
+        ///// Check if the value is considered true.
+        ///// </summary>
+        ///// <returns></returns>
+        //public bool IsTrue(string value)
+        //{
+        //    if (TokenType == ExpressionTokenType.Field && FieldValue.TypeHint == ValueTypeHint.Text) return false;
 
-        /// <summary>
-        /// Gets value as string with resolution.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <returns></returns>
-        public string ToString(EvaluationContext context)
-        {
-            switch (TokenType)
-            {
-                case ExpressionTokenType.Field:
-                    if (context == null) { throw new ArgumentNullException("context"); }
-                    return context.GetFieldValue(Value).ToString() ?? "";
-                default:
-                    return Value ?? "";
-            }
-        }
+        //    return string.Equals("true", Value, StringComparison.OrdinalIgnoreCase) || value == "1";
+        //}
+
+        ///// <summary>
+        ///// Check if the value is considered false.
+        ///// </summary>
+        ///// <returns></returns>
+        //public bool IsFalse(string value)
+        //{
+        //    if (TokenType == ExpressionTokenType.Field && FieldValue.TypeHint == ValueTypeHint.Text) return false;
+
+        //    return string.Equals("false", Value, StringComparison.OrdinalIgnoreCase) || value == "0";
+        //}
 
         /// <summary>
         /// Converts to the double value.
@@ -187,8 +187,7 @@ namespace Soukoku.ExpressionParser
                 case ExpressionTokenType.DoubleQuoted:
                     return double.Parse(Value, NumberParseStyle, CultureInfo.CurrentCulture);
                 case ExpressionTokenType.Field:
-                    if (context == null) { throw new ArgumentNullException("context"); }
-                    return double.Parse(context.GetFieldValue(Value).ToString(), NumberParseStyle, CultureInfo.CurrentCulture);
+                    return double.Parse(FieldValue.Value?.ToString(), NumberParseStyle, CultureInfo.CurrentCulture);
                 default:
                     throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Cannot convert {0}({1}) to a numeric value.", TokenType, Value));
             }
@@ -209,8 +208,7 @@ namespace Soukoku.ExpressionParser
                 case ExpressionTokenType.DoubleQuoted:
                     return decimal.Parse(Value, NumberParseStyle, CultureInfo.CurrentCulture);
                 case ExpressionTokenType.Field:
-                    if (context == null) { throw new ArgumentNullException("context"); }
-                    return decimal.Parse(context.GetFieldValue(Value).ToString(), NumberParseStyle, CultureInfo.CurrentCulture);
+                    return decimal.Parse(FieldValue.Value?.ToString(), NumberParseStyle, CultureInfo.CurrentCulture);
                 default:
                     throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Cannot convert {0}({1}) to a numeric value.", TokenType, Value));
             }

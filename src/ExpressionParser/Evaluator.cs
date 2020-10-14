@@ -42,6 +42,12 @@ namespace Soukoku.ExpressionParser
             }
 
             var tokens = new InfixToPostfixTokenizer().Tokenize(input);
+            // resolve field value and type hints here
+            foreach (var token in tokens.Where(tk => tk.TokenType == ExpressionTokenType.Field))
+            {
+                token.FieldValue = _context.ResolveFieldValue(token.Value);
+            }
+
             var reader = new ListReader<ExpressionToken>(tokens);
 
             // from https://en.wikipedia.org/wiki/Reverse_Polish_notation
@@ -216,8 +222,10 @@ namespace Soukoku.ExpressionParser
                     break;
                 // these logical comparision can be date/num/string!
                 case OperatorType.LessThan:
-                    var rhs = _stack.Pop().ToString(_context);
-                    var lhs = _stack.Pop().ToString(_context);
+                    var rhsToken = _stack.Pop();
+                    var lhsToken = _stack.Pop();
+                    var rhs = rhsToken.ToString();
+                    var lhs = lhsToken.ToString();
 
                     if (IsNumber(lhs, rhs, out decimal lhsNum, out decimal rhsNum))
                     {
@@ -233,8 +241,10 @@ namespace Soukoku.ExpressionParser
                     }
                     break;
                 case OperatorType.LessThanOrEqual:
-                    rhs = _stack.Pop().ToString(_context);
-                    lhs = _stack.Pop().ToString(_context);
+                    rhsToken = _stack.Pop();
+                    lhsToken = _stack.Pop();
+                    rhs = rhsToken.ToString();
+                    lhs = lhsToken.ToString();
 
                     if (IsNumber(lhs, rhs, out lhsNum, out rhsNum))
                     {
@@ -250,8 +260,10 @@ namespace Soukoku.ExpressionParser
                     }
                     break;
                 case OperatorType.GreaterThan:
-                    rhs = _stack.Pop().ToString(_context);
-                    lhs = _stack.Pop().ToString(_context);
+                    rhsToken = _stack.Pop();
+                    lhsToken = _stack.Pop();
+                    rhs = rhsToken.ToString();
+                    lhs = lhsToken.ToString();
 
                     if (IsNumber(lhs, rhs, out lhsNum, out rhsNum))
                     {
@@ -267,8 +279,10 @@ namespace Soukoku.ExpressionParser
                     }
                     break;
                 case OperatorType.GreaterThanOrEqual:
-                    rhs = _stack.Pop().ToString(_context);
-                    lhs = _stack.Pop().ToString(_context);
+                    rhsToken = _stack.Pop();
+                    lhsToken = _stack.Pop();
+                    rhs = rhsToken.ToString();
+                    lhs = lhsToken.ToString();
 
                     if (IsNumber(lhs, rhs, out lhsNum, out rhsNum))
                     {
@@ -284,14 +298,17 @@ namespace Soukoku.ExpressionParser
                     }
                     break;
                 case OperatorType.Equal:
-                    rhs = _stack.Pop().ToString(_context);
-                    lhs = _stack.Pop().ToString(_context);
+                    rhsToken = _stack.Pop();
+                    lhsToken = _stack.Pop();
+                    rhs = rhsToken.ToString();
+                    lhs = lhsToken.ToString();
 
                     if (IsBoolean(lhs, rhs, out bool lhsBool, out bool rhsBool))
                     {
                         _stack.Push(lhsBool == rhsBool ? ExpressionToken.True : ExpressionToken.False);
                     }
-                    else if (IsNumber(lhs, rhs, out lhsNum, out rhsNum))
+                    else if ((AllowAutoFormat(lhsToken) || AllowAutoFormat(rhsToken)) &&
+                        IsNumber(lhs, rhs, out lhsNum, out rhsNum))
                     {
                         _stack.Push(lhsNum == rhsNum ? ExpressionToken.True : ExpressionToken.False);
                     }
@@ -305,14 +322,17 @@ namespace Soukoku.ExpressionParser
                     }
                     break;
                 case OperatorType.NotEqual:
-                    rhs = _stack.Pop().ToString(_context);
-                    lhs = _stack.Pop().ToString(_context);
+                    rhsToken = _stack.Pop();
+                    lhsToken = _stack.Pop();
+                    rhs = rhsToken.ToString();
+                    lhs = lhsToken.ToString();
 
                     if (IsBoolean(lhs, rhs, out lhsBool, out rhsBool))
                     {
                         _stack.Push(lhsBool != rhsBool ? ExpressionToken.True : ExpressionToken.False);
                     }
-                    else if (IsNumber(lhs, rhs, out lhsNum, out rhsNum))
+                    else if ((AllowAutoFormat(lhsToken) || AllowAutoFormat(rhsToken)) &&
+                        IsNumber(lhs, rhs, out lhsNum, out rhsNum))
                     {
                         _stack.Push(lhsNum != rhsNum ? ExpressionToken.True : ExpressionToken.False);
                     }
@@ -358,6 +378,11 @@ namespace Soukoku.ExpressionParser
             }
         }
 
+        static bool AllowAutoFormat(ExpressionToken token)
+        {
+            return token.TokenType != ExpressionTokenType.Field || token.FieldValue.TypeHint != ValueTypeHint.Text;
+        }
+
         static bool IsTrue(string value)
         {
             return string.Equals("true", value, StringComparison.OrdinalIgnoreCase) || value == "1";
@@ -378,7 +403,7 @@ namespace Soukoku.ExpressionParser
         void UnaryLogicOperation(Func<string, bool> operation)
         {
             var op1 = _stack.Pop();
-            var res = operation(op1.ToString(_context)) ? "1" : "0";
+            var res = operation(op1.ToString()) ? "1" : "0";
 
             _stack.Push(new ExpressionToken(res));
         }
@@ -387,7 +412,7 @@ namespace Soukoku.ExpressionParser
             var op2 = _stack.Pop();
             var op1 = _stack.Pop();
 
-            var res = operation(op1.ToString(_context), op2.ToString(_context)) ? "1" : "0";
+            var res = operation(op1.ToString(), op2.ToString()) ? "1" : "0";
 
             _stack.Push(new ExpressionToken(res));
         }

@@ -26,7 +26,7 @@ namespace Soukoku.ExpressionParser
         static readonly Dictionary<string, FunctionRoutine> __staticFuncs = new Dictionary<string, FunctionRoutine>(StringComparer.OrdinalIgnoreCase);
         readonly Dictionary<string, FunctionRoutine> _instanceFuncs = new Dictionary<string, FunctionRoutine>(StringComparer.OrdinalIgnoreCase);
 
-        Func<string, object> _fieldLookup;
+        Func<string, (object, ValueTypeHint)> _fieldLookup;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EvaluationContext"/> class.
@@ -37,20 +37,20 @@ namespace Soukoku.ExpressionParser
         /// Initializes a new instance of the <see cref="EvaluationContext"/> class.
         /// </summary>
         /// <param name="fieldLookupRoutine">The field value lookup routine.</param>
-        public EvaluationContext(Func<string, object> fieldLookupRoutine)
+        public EvaluationContext(Func<string, (object Value, ValueTypeHint TypeHint)> fieldLookupRoutine)
         {
             _fieldLookup = fieldLookupRoutine;
         }
 
         /// <summary>
-        /// Gets the field value.
+        /// Resolves the field value.
         /// </summary>
         /// <param name="field">The field.</param>
         /// <returns></returns>
-        public object GetFieldValue(string field)
+        public (object Value, ValueTypeHint TypeHint) ResolveFieldValue(string field)
         {
-            if (_fieldLookup != null) { return _fieldLookup(field) ?? string.Empty; }
-            return OnGetFieldValue(field);
+            if (_fieldLookup != null) { return _fieldLookup(field); }
+            return OnResolveFieldValue(field);
         }
 
         /// <summary>
@@ -58,9 +58,9 @@ namespace Soukoku.ExpressionParser
         /// </summary>
         /// <param name="field">The field.</param>
         /// <returns></returns>
-        protected virtual object OnGetFieldValue(string field)
+        protected virtual (object Value, ValueTypeHint TypeHint) OnResolveFieldValue(string field)
         {
-            return string.Empty;
+            return (string.Empty, ValueTypeHint.Auto);
         }
 
         /// <summary>
@@ -120,4 +120,16 @@ namespace Soukoku.ExpressionParser
         }
     }
 
+
+    public enum ValueTypeHint
+    {
+        /// <summary>
+        /// Value is converted to suitable type for comparison purposes.
+        /// </summary>
+        Auto,
+        /// <summary>
+        /// Value is forced to be text for comparison purposes.
+        /// </summary>
+        Text,
+    }
 }
