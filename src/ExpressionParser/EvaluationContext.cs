@@ -14,13 +14,13 @@ namespace Soukoku.ExpressionParser
         static Dictionary<string, FunctionRoutine> BuiltInFunctions = new Dictionary<string, FunctionRoutine>(StringComparer.OrdinalIgnoreCase)
         {
             { "pow", new FunctionRoutine(2, (ctx, args)=>
-                    new ExpressionToken( Math.Pow(args[0].ToDouble(ctx), args[1].ToDouble(ctx)).ToString(CultureInfo.CurrentCulture))) },
+                    new ExpressionToken( Math.Pow(args[0].ToDouble(ctx), args[1].ToDouble(ctx)).ToString(CultureInfo.InvariantCulture))) },
             { "sin", new FunctionRoutine(1, (ctx, args)=>
-                    new ExpressionToken( Math.Sin(args[0].ToDouble(ctx)).ToString(CultureInfo.CurrentCulture)))},
+                    new ExpressionToken( Math.Sin(args[0].ToDouble(ctx)).ToString(CultureInfo.InvariantCulture)))},
             { "cos", new FunctionRoutine(1, (ctx, args)=>
-                    new ExpressionToken( Math.Cos(args[0].ToDouble(ctx)).ToString(CultureInfo.CurrentCulture)))},
+                    new ExpressionToken( Math.Cos(args[0].ToDouble(ctx)).ToString(CultureInfo.InvariantCulture)))},
             { "tan", new FunctionRoutine(1, (ctx, args)=>
-                    new ExpressionToken( Math.Tan(args[0].ToDouble(ctx)).ToString(CultureInfo.CurrentCulture)))}
+                    new ExpressionToken( Math.Tan(args[0].ToDouble(ctx)).ToString(CultureInfo.InvariantCulture)))}
         };
 
         static readonly Dictionary<string, FunctionRoutine> __staticFuncs = new Dictionary<string, FunctionRoutine>(StringComparer.OrdinalIgnoreCase);

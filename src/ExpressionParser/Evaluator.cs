@@ -134,8 +134,8 @@ namespace Soukoku.ExpressionParser
             lhsNumber = 0;
             rhsNumber = 0;
 
-            var islNum = decimal.TryParse(lhs, ExpressionToken.NumberParseStyle, CultureInfo.CurrentCulture, out lhsNumber);
-            var isrNum = decimal.TryParse(rhs, ExpressionToken.NumberParseStyle, CultureInfo.CurrentCulture, out rhsNumber);
+            var islNum = decimal.TryParse(lhs, ExpressionToken.NumberParseStyle, CultureInfo.InvariantCulture, out lhsNumber);
+            var isrNum = decimal.TryParse(rhs, ExpressionToken.NumberParseStyle, CultureInfo.InvariantCulture, out rhsNumber);
 
             return islNum && isrNum;
         }
@@ -398,7 +398,7 @@ namespace Soukoku.ExpressionParser
             var op1 = _stack.Pop().ToDecimal(_context);
             var res = operation(op1);
 
-            _stack.Push(new ExpressionToken(res.ToString(CultureInfo.CurrentCulture)));
+            _stack.Push(new ExpressionToken(res.ToString(CultureInfo.InvariantCulture)));
         }
         void UnaryLogicOperation(Func<string, bool> operation)
         {
@@ -423,7 +423,7 @@ namespace Soukoku.ExpressionParser
 
             var res = operation(op1, op2);
 
-            _stack.Push(new ExpressionToken(res.ToString(CultureInfo.CurrentCulture)));
+            _stack.Push(new ExpressionToken(res.ToString(CultureInfo.InvariantCulture)));
         }
 
         #endregion

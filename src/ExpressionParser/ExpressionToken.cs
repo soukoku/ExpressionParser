@@ -185,9 +185,9 @@ namespace Soukoku.ExpressionParser
                 case ExpressionTokenType.Value:
                 case ExpressionTokenType.SingleQuoted:
                 case ExpressionTokenType.DoubleQuoted:
-                    return double.Parse(Value, NumberParseStyle, CultureInfo.CurrentCulture);
+                    return double.Parse(Value, NumberParseStyle, CultureInfo.InvariantCulture);
                 case ExpressionTokenType.Field:
-                    return double.Parse(FieldValue.Value?.ToString(), NumberParseStyle, CultureInfo.CurrentCulture);
+                    return double.Parse(FieldValue.Value?.ToString(), NumberParseStyle, CultureInfo.InvariantCulture);
                 default:
                     throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Cannot convert {0}({1}) to a numeric value.", TokenType, Value));
             }
