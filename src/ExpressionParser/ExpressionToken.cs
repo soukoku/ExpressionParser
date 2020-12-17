@@ -185,9 +185,9 @@ namespace Soukoku.ExpressionParser
                 case ExpressionTokenType.Value:
                 case ExpressionTokenType.SingleQuoted:
                 case ExpressionTokenType.DoubleQuoted:
-                    return double.Parse(Value, NumberParseStyle, CultureInfo.InvariantCulture);
+                    return double.Parse(Value, NumberParseStyle, context.FormatCulture);
                 case ExpressionTokenType.Field:
-                    return double.Parse(FieldValue.Value?.ToString(), NumberParseStyle, CultureInfo.InvariantCulture);
+                    return double.Parse(FieldValue.Value?.ToString(), NumberParseStyle, context.FormatCulture);
                 default:
                     throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Cannot convert {0}({1}) to a numeric value.", TokenType, Value));
             }
@@ -206,9 +206,9 @@ namespace Soukoku.ExpressionParser
                 case ExpressionTokenType.Value:
                 case ExpressionTokenType.SingleQuoted:
                 case ExpressionTokenType.DoubleQuoted:
-                    return decimal.Parse(Value, NumberParseStyle, CultureInfo.InvariantCulture);
+                    return decimal.Parse(Value, NumberParseStyle, context.FormatCulture);
                 case ExpressionTokenType.Field:
-                    return decimal.Parse(FieldValue.Value?.ToString(), NumberParseStyle, CultureInfo.InvariantCulture);
+                    return decimal.Parse(FieldValue.Value?.ToString(), NumberParseStyle, context.FormatCulture);
                 default:
                     throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Cannot convert {0}({1}) to a numeric value.", TokenType, Value));
             }

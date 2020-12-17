@@ -14,13 +14,13 @@ namespace Soukoku.ExpressionParser
         static Dictionary<string, FunctionRoutine> BuiltInFunctions = new Dictionary<string, FunctionRoutine>(StringComparer.OrdinalIgnoreCase)
         {
             { "pow", new FunctionRoutine(2, (ctx, args)=>
-                    new ExpressionToken( Math.Pow(args[0].ToDouble(ctx), args[1].ToDouble(ctx)).ToString(CultureInfo.InvariantCulture))) },
+                    new ExpressionToken( Math.Pow(args[0].ToDouble(ctx), args[1].ToDouble(ctx)).ToString(ctx.FormatCulture))) },
             { "sin", new FunctionRoutine(1, (ctx, args)=>
-                    new ExpressionToken( Math.Sin(args[0].ToDouble(ctx)).ToString(CultureInfo.InvariantCulture)))},
+                    new ExpressionToken( Math.Sin(args[0].ToDouble(ctx)).ToString(ctx.FormatCulture)))},
             { "cos", new FunctionRoutine(1, (ctx, args)=>
-                    new ExpressionToken( Math.Cos(args[0].ToDouble(ctx)).ToString(CultureInfo.InvariantCulture)))},
+                    new ExpressionToken( Math.Cos(args[0].ToDouble(ctx)).ToString(ctx.FormatCulture)))},
             { "tan", new FunctionRoutine(1, (ctx, args)=>
-                    new ExpressionToken( Math.Tan(args[0].ToDouble(ctx)).ToString(CultureInfo.InvariantCulture)))}
+                    new ExpressionToken( Math.Tan(args[0].ToDouble(ctx)).ToString(ctx.FormatCulture)))}
         };
 
         static readonly Dictionary<string, FunctionRoutine> __staticFuncs = new Dictionary<string, FunctionRoutine>(StringComparer.OrdinalIgnoreCase);
@@ -52,6 +52,20 @@ namespace Soukoku.ExpressionParser
             if (_fieldLookup != null) { return _fieldLookup(field); }
             return OnResolveFieldValue(field);
         }
+
+        readonly CultureInfo _usCulture = new CultureInfo("en-US");
+        private CultureInfo _formatCulture = null;
+
+        /// <summary>
+        /// Gets/sets the culture used to parse/format expressions. 
+        /// Defaults to en-US for certain reasons.
+        /// </summary>
+        public CultureInfo FormatCulture
+        {
+            get { return _formatCulture ?? _usCulture; }
+            set { _formatCulture = value; }
+        }
+
 
         /// <summary>
         /// Gets the field value.

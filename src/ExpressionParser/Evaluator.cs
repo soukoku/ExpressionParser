@@ -129,13 +129,13 @@ namespace Soukoku.ExpressionParser
             }
             return false;
         }
-        static bool IsNumber(string lhs, string rhs, out decimal lhsNumber, out decimal rhsNumber)
+        bool IsNumber(string lhs, string rhs, out decimal lhsNumber, out decimal rhsNumber)
         {
             lhsNumber = 0;
             rhsNumber = 0;
 
-            var islNum = decimal.TryParse(lhs, ExpressionToken.NumberParseStyle, CultureInfo.InvariantCulture, out lhsNumber);
-            var isrNum = decimal.TryParse(rhs, ExpressionToken.NumberParseStyle, CultureInfo.InvariantCulture, out rhsNumber);
+            var islNum = decimal.TryParse(lhs, ExpressionToken.NumberParseStyle, _context.FormatCulture, out lhsNumber);
+            var isrNum = decimal.TryParse(rhs, ExpressionToken.NumberParseStyle, _context.FormatCulture, out rhsNumber);
 
             return islNum && isrNum;
         }
@@ -398,7 +398,7 @@ namespace Soukoku.ExpressionParser
             var op1 = _stack.Pop().ToDecimal(_context);
             var res = operation(op1);
 
-            _stack.Push(new ExpressionToken(res.ToString(CultureInfo.InvariantCulture)));
+            _stack.Push(new ExpressionToken(res.ToString(_context.FormatCulture)));
         }
         void UnaryLogicOperation(Func<string, bool> operation)
         {
@@ -423,7 +423,7 @@ namespace Soukoku.ExpressionParser
 
             var res = operation(op1, op2);
 
-            _stack.Push(new ExpressionToken(res.ToString(CultureInfo.InvariantCulture)));
+            _stack.Push(new ExpressionToken(res.ToString(_context.FormatCulture)));
         }
 
         #endregion
