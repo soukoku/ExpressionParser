@@ -147,7 +147,7 @@ namespace Soukoku.ExpressionParser
         //{
         //    if (TokenType == ExpressionTokenType.Field && FieldValue.TypeHint == ValueTypeHint.Text) return false;
 
-        //    return decimal.TryParse(Value, NumberParseStyle, CultureInfo.CurrentCulture, out decimal dummy);
+        //    return decimal.TryParse(Value, NumberParseStyle, CultureInfo.InvariantCulture, out decimal dummy);
         //}
 
         ///// <summary>
@@ -206,9 +206,9 @@ namespace Soukoku.ExpressionParser
                 case ExpressionTokenType.Value:
                 case ExpressionTokenType.SingleQuoted:
                 case ExpressionTokenType.DoubleQuoted:
-                    return decimal.Parse(Value, NumberParseStyle, CultureInfo.CurrentCulture);
+                    return decimal.Parse(Value, NumberParseStyle, CultureInfo.InvariantCulture);
                 case ExpressionTokenType.Field:
-                    return decimal.Parse(FieldValue.Value?.ToString(), NumberParseStyle, CultureInfo.CurrentCulture);
+                    return decimal.Parse(FieldValue.Value?.ToString(), NumberParseStyle, CultureInfo.InvariantCulture);
                 default:
                     throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, "Cannot convert {0}({1}) to a numeric value.", TokenType, Value));
             }
