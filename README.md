@@ -70,3 +70,5 @@ var evaluator = new Evaluator(context);
 var result = evaluator.Evaluate("10 + always5()");
 Console.WriteLine(result.ToString()); // should be "15"
 ```
+Because the use of functions, floating-point numbers can only use period as the decimal separator 
+(i.e. only "2.5" is supported, not "2,5").
